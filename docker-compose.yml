@@ -1,0 +1,60 @@
+name: zerobytes
+
+networks:
+  internal:
+    internal: true        # no route to the internet
+  edge:                   # has egress; used ONLY by the setup job and the UI proxy
+
+volumes:
+  ollama_models:
+  phoenix_data:
+
+secrets:
+  pii_vault_key:
+    file: ./secrets/pii_vault_key
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    environment:
+      OLLAMA_KEEP_ALIVE: 30m
+      OLLAMA_NUM_PARALLEL: "1"
+    volumes: [ollama_models:/root/.ollama]
+    networks: [internal]
+
+  phoenix:
+    image: arizephoenix/phoenix:latest
+    environment:
+      PHOENIX_WORKING_DIR: /data
+      PHOENIX_TELEMETRY_ENABLED: "false"   # verify var name against current Phoenix docs
+    volumes: [phoenix_data:/data]
+    networks: [internal]
+
+  # Lets me open the Phoenix UI from the host (via SSH/Bastion tunnel on Azure)
+  # while Phoenix itself stays on the internal network. Bound to localhost only.
+  ui-proxy:
+    image: alpine/socat
+    command: tcp-listen:6006,fork,reuseaddr tcp:phoenix:6006
+    ports: ["127.0.0.1:6006:6006"]
+    networks: [internal, edge]
+    depends_on: [phoenix]
+
+  app:
+    build: .
+    env_file: .env
+    secrets: [pii_vault_key]
+    volumes: ["./data:/app/data"]
+    depends_on: [ollama, phoenix]
+    networks: [internal]
+
+  # One-time job: pulls models into the shared volume. Run with the setup profile,
+  # then never again. This is the only service that talks to the internet.
+  ollama-setup:
+    profiles: [setup]
+    image: ollama/ollama:latest
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - "ollama serve & sleep 6; ollama pull $${ROUTER_MODEL:-llama3.2:3b}; ollama pull $${EXTRACT_MODEL:-qwen2.5:7b}"
+    env_file: .env
+    volumes: [ollama_models:/root/.ollama]
+    networks: [edge]

@@ -1,0 +1,9 @@
+.env
+secrets/*
+!secrets/.gitkeep
+data/work/*
+data/vault/*
+!data/work/.gitkeep
+!data/vault/.gitkeep
+bundle/
+__pycache__/

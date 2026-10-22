@@ -1,0 +1,32 @@
+PROTOCOL XT-204: A Phase II Study of Compound ABC-123 in Moderate Plaque Psoriasis
+
+Principal Investigator: Dr. Farid Lindqvist, Riverton Medical Center
+Site Coordinator: Grace Morales, grace.morales@trial-site.example, 212-555-0147
+
+1. Study Objectives
+Primary: evaluate efficacy of ABC-123 versus placebo at Week 16.
+Secondary: assess safety and tolerability through Week 52.
+
+2. Study Design
+Randomized, double-blind, placebo-controlled, parallel-group study in 120 adults.
+Sample record for training: patient SUBJ-9779, MRN-2215279, DOB: 04/12/1981.
+
+3. Inclusion Criteria
+Age 18 to 65 years at screening.
+Diagnosis of plaque psoriasis for at least 6 months.
+PASI score of 12 or greater and BSA involvement of 10 percent or greater.
+
+4. Exclusion Criteria
+Prior exposure to any biologic IL-17 inhibitor.
+Active tuberculosis or untreated latent tuberculosis.
+Pregnancy or breastfeeding.
+
+5. Endpoints
+Primary endpoint: proportion of subjects achieving PASI 75 at Week 16.
+Secondary endpoint: proportion achieving sPGA score of 0 or 1 at Week 16.
+
+6. Schedule of Assessments
+Screening visit, Baseline (Day 1), Week 4, Week 8, Week 16, Week 52.
+
+7. Dosing
+ABC-123 150 mg subcutaneous injection at Day 1, Week 1, Week 2, then every 4 weeks.

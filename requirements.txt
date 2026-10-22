@@ -1,0 +1,15 @@
+langgraph
+langgraph-checkpoint-sqlite
+langchain-core
+langchain-ollama
+pydantic>=2
+presidio-analyzer
+presidio-anonymizer
+spacy
+cryptography
+pymupdf
+pandas
+duckdb
+arize-phoenix-otel
+openinference-instrumentation-langchain
+pytest
