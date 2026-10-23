@@ -3,8 +3,8 @@ import json
 import uuid
 
 from .graph import build_graph
-from .tracing import init_tracing
-from .vault import PIIVault
+from app.common.tracing import init_tracing
+from app.common.vault import PIIVault
 
 
 def main() -> None:

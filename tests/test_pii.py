@@ -1,4 +1,4 @@
-from app.pii import PIIMasker, compliance_report
+from app.common.pii import PIIMasker, compliance_report
 
 
 def test_masks_planted_pii():

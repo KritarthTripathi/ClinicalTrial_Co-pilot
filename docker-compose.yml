@@ -42,6 +42,8 @@ services:
   app:
     build: .
     env_file: .env
+    environment:
+      PYTHONDONTWRITEBYTECODE: "1"
     secrets: [pii_vault_key]
     volumes: 
     - ./data:/app/data

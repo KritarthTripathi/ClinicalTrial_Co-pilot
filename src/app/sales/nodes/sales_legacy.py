@@ -3,7 +3,7 @@ import re
 
 import duckdb
 
-from ..llm import get_llm
+from app.common.llm import get_llm
 
 FORBIDDEN = re.compile(r"\b(insert|update|delete|drop|alter|create|attach|copy|pragma|install|load|export|call|set)\b", re.I)
 

@@ -1,6 +1,6 @@
 import re
 
-from ..config import settings
+from app.common.config import settings
 
 
 def _tokens(s: str) -> set[str]:

@@ -2,8 +2,8 @@ import re
 
 from pydantic import BaseModel, Field
 
-from ..config import settings
-from ..llm import get_llm
+from app.common.config import settings
+from app.common.llm import get_llm
 
 HEADING = re.compile(r"^\s*(\d+(?:\.\d+)*\.?)\s+([A-Z][A-Za-z /&-]{3,})\s*$")
 RELEVANT = re.compile(r"inclusion|exclusion|endpoint|objective|schedule|dosing|treatment|design", re.I)

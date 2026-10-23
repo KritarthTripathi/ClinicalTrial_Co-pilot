@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from app.pii import PIIMasker
+from app.common.pii import PIIMasker
 
 planted = json.loads(Path("data/synthetic/planted_pii.json").read_text())
 m = PIIMasker()

@@ -5,9 +5,9 @@ from pathlib import Path
 
 import pandas as pd
 
-from ..config import settings
-from ..pii import PIIMasker, compliance_report
-from ..vault import PIIVault
+from app.common.config import settings
+from app.common.pii import PIIMasker, compliance_report
+from app.common.vault import PIIVault
 
 
 def _read_text(path: Path) -> str:
