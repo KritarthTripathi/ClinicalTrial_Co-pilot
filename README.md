@@ -51,3 +51,5 @@ Phoenix UI: http://localhost:6006 (on Azure, via SSH tunnel through Bastion).
 - Phoenix Evals with a local judge model (hallucination, extraction accuracy).
 - Pin dependencies (`pip freeze > requirements.lock`) once the stack builds.
 - Verify the Phoenix telemetry-disable variable and Azure extension names against current docs.
+
+## First metrics resulted in planted=142 leaked=57 recall=0.599 which was corrected to recall 1.000 after masking the mail Ids

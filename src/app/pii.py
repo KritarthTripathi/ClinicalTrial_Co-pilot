@@ -33,9 +33,10 @@ def get_analyzer() -> AnalyzerEngine:
     pat("SUBJECT_ID", "subj", r"\bSUBJ-\d{3,6}\b")
     pat("DATE_OF_BIRTH", "dob", r"\b(?:DOB|Date of Birth)[:\s]*\d{1,2}/\d{1,2}/\d{4}\b")
     pat("PHONE_NUMBER", "us_phone", r"\(?\b\d{3}\)?[-.\s]\d{3}[-.\s]\d{4}\b")
+    pat("EMAIL_ADDRESS", "email_regex", r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b", 0.95)
     return AnalyzerEngine(registry=registry, nlp_engine=nlp, supported_languages=["en"])
 
-
+PRIORITY = {"MRN": 0, "SUBJECT_ID": 0, "DATE_OF_BIRTH": 0, "EMAIL_ADDRESS": 1, "PHONE_NUMBER": 1}
 class PIIMasker:
     """Stateful per document: same original -> same placeholder, map kept for the vault."""
 
@@ -59,7 +60,8 @@ class PIIMasker:
         if not text.strip():
             return text
         results = self.analyzer.analyze(text=text, language="en", entities=ENTITIES, score_threshold=0.4)
-        results = sorted(results, key=lambda r: (r.start, -(r.end - r.start)))
+        results = sorted(results, key=lambda r: (r.start, -(r.end - r.start),
+                         PRIORITY.get(r.entity_type, 2), -r.score))
         out, pos = [], 0
         for r in results:
             if r.start < pos:   # skip overlaps

@@ -1,4 +1,4 @@
-name: zerobytes
+name: Clinical-co-pilot
 
 networks:
   internal:
@@ -43,7 +43,12 @@ services:
     build: .
     env_file: .env
     secrets: [pii_vault_key]
-    volumes: ["./data:/app/data"]
+    volumes: 
+    - ./data:/app/data
+    - ./src:/app/src
+    - ./scripts:/app/scripts
+    - ./tests:/app/tests
+    # ["./data:/app/data"]
     depends_on: [ollama, phoenix]
     networks: [internal]
 

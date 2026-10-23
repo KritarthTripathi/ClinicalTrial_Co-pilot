@@ -4,7 +4,8 @@ WORKDIR /app
 COPY requirements.txt .
 # Build-time only: needs internet. Runtime containers have none.
 RUN pip install --no-cache-dir -r requirements.txt \
- && python -m spacy download en_core_web_lg
+ && python -m spacy download en_core_web_lg 
+RUN python -c "import tldextract; tldextract.extract('test.example.com')"
 COPY src ./src
 COPY scripts ./scripts
 COPY tests ./tests

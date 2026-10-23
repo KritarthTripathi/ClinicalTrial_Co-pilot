@@ -1,9 +1,9 @@
 #!/bin/sh
 # FAILS (exit 1) if a container on the internal network can reach the internet.
 # Run in CI and on every deploy; keep the output as audit evidence.
-NET=zerobytes_internal
+NET=clinical-co-pilot_internal
 IMG=$(docker compose images -q app 2>/dev/null | head -1)
-[ -z "$IMG" ] && IMG=zerobytes-app
+[ -z "$IMG" ] && IMG=clinical-co-pilot-app
 docker run --rm --network "$NET" "$IMG" python - <<'PY'
 import socket, sys
 leaks = []
