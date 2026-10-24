@@ -8,7 +8,7 @@ import duckdb
 
 from app.common.config import settings
 from app.common.llm import get_llm
-from app.sales.semantic.catalog import EXAMPLES, KEYWORDS, METRICS_TEXT, TEMPLATE, VIEWS
+from app.sales.semantic.catalog import KEYWORDS, VIEWS, build_prompt
 from app.sales.sql_guard import guard
 
 DB = Path(settings.work_dir) / "pharma.duckdb"
@@ -39,7 +39,7 @@ def select_views_node(state):
     q = state["question"].lower()
     chosen = [v for v, kws in KEYWORDS.items() if any(k in q for k in kws)]
     if "v_hcp_rx" in chosen and "v_hcp_activity" in chosen:
-        chosen = ["v_hcp_monthly"] + chosen
+        chosen = ["v_hcp_monthly"]
     con = connect()
     data_end = str(con.execute("SELECT MAX(week_start) FROM fact_rx").fetchone()[0])
     con.close()
@@ -47,9 +47,7 @@ def select_views_node(state):
 
 
 def write_sql_node(state):
-    views = "\n".join(f"- {v}: {VIEWS[v]['desc']} Columns: {VIEWS[v]['cols']}" for v in state["views"])
-    prompt = TEMPLATE.format(views=views, metrics=METRICS_TEXT, data_end=state["data_end"],
-                             examples=EXAMPLES, question=state["question"])
+    prompt = build_prompt(state["question"], state["views"], state["data_end"])
     if state.get("error"):
         prompt += f" {state.get('sql_raw', '')[:400]}\n(That attempt failed: {state['error']}. Write a corrected query.)\nSQL:"
     raw = get_llm("sql").invoke(prompt).content

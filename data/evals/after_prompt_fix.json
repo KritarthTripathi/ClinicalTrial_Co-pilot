@@ -1,0 +1,117 @@
+{
+ "accuracy": 0.21428571428571427,
+ "results": [
+  {
+   "id": "q01",
+   "ok": true,
+   "attempts": 1,
+   "seconds": 112.3,
+   "sql": "SELECT hcp_id, SUM(trx) AS total_trx FROM v_hcp_rx WHERE is_ours = TRUE AND week_start > CAST('2025-10-1' AS DATE) - INTERVAL '13' DAY GROUP BY hcp_id ORDER BY total_trx DESC LIMIT 10",
+   "error": ""
+  },
+  {
+   "id": "q02",
+   "ok": false,
+   "attempts": 1,
+   "seconds": 6.7,
+   "sql": "SELECT hcp_id, SUM(trx) AS TRx FROM v_hcp_rx WHERE is_ours = TRUE GROUP BY hcp_id ORDER BY TRx DESC LIMIT 1",
+   "error": ""
+  },
+  {
+   "id": "q03",
+   "ok": false,
+   "attempts": 1,
+   "seconds": 31.0,
+   "sql": "SELECT SUM(calls) AS total_calls FROM v_hcp_activity WHERE week_start > CAST('2025-12-29' AS DATE) - INTERVAL '7' DAY GROUP BY week_start ORDER BY week_start ASC LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "q04",
+   "ok": false,
+   "attempts": 3,
+   "seconds": 39.5,
+   "sql": "SELECT specialty, SUM(vae_opened) * 1.0 / SUM(vae_sent) AS vae_open_rate FROM v_hcp_activity WHERE is_ours = TRUE GROUP BY specialty ORDER BY vae_open_rate DESC LIMIT 1",
+   "error": "SQL error: Binder Error: Referenced column \"is_ours\" not found in FROM clause!\nCandidate bindings: \"vae_opened\"\n\nLINE 1: ....0 / SUM(vae_sent) AS vae_open_rate FROM v_hcp_activity WHERE is_ours = TRUE GROUP BY specialty ORDER BY vae_open_rate...\n                                                                 "
+  },
+  {
+   "id": "q05",
+   "ok": false,
+   "attempts": 1,
+   "seconds": 6.5,
+   "sql": "SELECT state, SUM(nbrx) AS nbrx FROM v_hcp_rx WHERE is_ours = TRUE GROUP BY state ORDER BY nbrx DESC LIMIT 1",
+   "error": ""
+  },
+  {
+   "id": "q06",
+   "ok": false,
+   "attempts": 2,
+   "seconds": 47.0,
+   "sql": "SELECT plan_id, SUM(submitted) AS submitted, SUM(rejected) AS rejected, SUM(submitted) * 1.0 / COUNT(*) AS reject_rate FROM v_payer_access WHERE is_ours = TRUE GROUP BY plan_id ORDER BY reject_rate DESC LIMIT 3",
+   "error": ""
+  },
+  {
+   "id": "q07",
+   "ok": true,
+   "attempts": 1,
+   "seconds": 8.7,
+   "sql": "SELECT channel, SUM(rejected) * 1.0 / SUM(submitted) AS reject_rate FROM v_payer_access WHERE is_ours = TRUE GROUP BY channel ORDER BY reject_rate DESC LIMIT 3",
+   "error": ""
+  },
+  {
+   "id": "q08",
+   "ok": false,
+   "attempts": 1,
+   "seconds": 32.2,
+   "sql": "SELECT channel, SUM(trx) AS TRx FROM v_hcp_rx WHERE is_ours = TRUE GROUP BY channel ORDER BY TRx DESC LIMIT 1",
+   "error": ""
+  },
+  {
+   "id": "q09",
+   "ok": false,
+   "attempts": 1,
+   "seconds": 8.6,
+   "sql": "SELECT rep_id, SUM(calls) AS calls FROM v_hcp_activity WHERE week_start > CAST('2025-12-29' AS DATE) - INTERVAL (3 * 7) DAY GROUP BY rep_id ORDER BY calls DESC LIMIT 3",
+   "error": ""
+  },
+  {
+   "id": "q10",
+   "ok": false,
+   "attempts": 1,
+   "seconds": 9.1,
+   "sql": "SELECT hcp_id, SUM(calls) AS calls FROM v_hcp_activity WHERE week_start > CAST('2025-12-29' AS DATE) - INTERVAL (5 * 7) DAY GROUP BY hcp_id ORDER BY calls DESC LIMIT 5",
+   "error": ""
+  },
+  {
+   "id": "q11",
+   "ok": false,
+   "attempts": 1,
+   "seconds": 13.0,
+   "sql": "SELECT month, SUM(nbrx) AS nbrx FROM v_hcp_rx WHERE is_ours = TRUE AND week_start > CAST('2025-10-01' AS DATE) - INTERVAL '7' DAY AND week_start < CAST('2025-12-29' AS DATE) GROUP BY month ORDER BY month LIMIT 3",
+   "error": ""
+  },
+  {
+   "id": "q12",
+   "ok": false,
+   "attempts": 3,
+   "seconds": 30.3,
+   "sql": "SELECT hcp_id FROM v_hcp_activity WHERE calls > 20 AND week_start > CAST('2025-12-29' AS DATE) - INTERVAL '7' DAY GROUP BY hcp_id ORDER BY COUNT(*) DESC LIMIT 1",
+   "error": "query returned no rows; check filters and date ranges"
+  },
+  {
+   "id": "q13",
+   "ok": false,
+   "attempts": 3,
+   "seconds": 108.5,
+   "sql": "SELECT hcp_id, SUM(calls) AS total_calls, SUM(trx_ours) AS total_trx FROM v_hcp_activity WHERE hcp_id IN (SELECT hcp_id FROM v_hcp_monthly WHERE specialty = 'Dermatology' GROUP BY hcp_id ORDER BY SUM(nbrx_ours) DESC LIMIT 5) GROUP BY hcp_id ORDER BY total_trx DESC, total_calls DESC LIMIT 1",
+   "error": "SQL error: Binder Error: Referenced column \"trx_ours\" not found in FROM clause!\nCandidate bindings: \"rep_id\", \"territory_id\", \"vae_sent\"\n\nLINE 1: SELECT hcp_id, SUM(calls) AS total_calls, SUM(trx_ours) AS total_trx FROM v_hcp_activity WHERE hcp_id...\n                                                      ^^^^^^"
+  },
+  {
+   "id": "q14",
+   "ok": true,
+   "attempts": 1,
+   "seconds": 6.9,
+   "sql": "SELECT plan_id, SUM(abandoned) AS abandoned FROM v_payer_access WHERE is_ours = TRUE GROUP BY plan_id ORDER BY abandoned DESC LIMIT 1",
+   "error": ""
+  }
+ ]
+}
