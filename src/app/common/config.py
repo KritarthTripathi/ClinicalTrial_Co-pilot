@@ -8,6 +8,7 @@ from dataclasses import dataclass
 class Settings:
     ollama_base_url: str = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
     router_model: str = os.getenv("ROUTER_MODEL", "llama3.2:3b")
+    sql_model: str = os.getenv("SQL_MODEL", "qwen2.5-coder:3b")
     extract_model: str = os.getenv("EXTRACT_MODEL", "qwen2.5:7b")
     phoenix_endpoint: str = os.getenv("PHOENIX_ENDPOINT", "http://localhost:6006/v1/traces")
     phoenix_project: str = os.getenv("PHOENIX_PROJECT", "zero-bytes-agents")

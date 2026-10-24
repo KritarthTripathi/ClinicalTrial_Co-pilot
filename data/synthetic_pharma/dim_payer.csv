@@ -1,0 +1,13 @@
+plan_id,payer_name,channel,lives
+P01,Northstar Health,Commercial,765023
+P02,Meridian Care,Commercial,288938
+P03,Lakeview Plans,Commercial,623526
+P04,Pioneer Health,Commercial,827230
+P05,Summit Mutual,Medicare,823777
+P06,Evergreen Health,Medicare,680317
+P07,Northstar Health,Medicare,222144
+P08,Meridian Care,Medicare,866493
+P09,Lakeview Plans,Medicaid,510767
+P10,Pioneer Health,Medicaid,514071
+P11,Summit Mutual,Medicaid,646182
+P12,Evergreen Health,Medicaid,703731

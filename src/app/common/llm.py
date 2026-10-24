@@ -5,5 +5,5 @@ from .config import settings
 
 
 def get_llm(role: str = "extract") -> ChatOllama:
-    model = settings.router_model if role == "router" else settings.extract_model
+    model = {"router": settings.router_model, "sql": settings.sql_model}.get(role, settings.extract_model)
     return ChatOllama(model=model, base_url=settings.ollama_base_url, temperature=0, num_ctx=4096)

@@ -1,9 +1,11 @@
-# Zero-Bytes-Out Multi-Agent Framework
+# Zero-Bytes-Out Pharma Analytics Agent
 
-Local-first multi-agent pipeline that parses **clinical trial protocols** and **sales analytics**
-with **no external LLM API calls**. Ollama (open-weight models) + LangGraph (stateful agents) +
-Presidio (PII masking and compliance) + Arize Phoenix (self-hosted tracing).
-Built on a synthetic-data Azure VM, designed to move to an air-gapped on-prem box unchanged.
+Local-first, air-gapped multi-agent text-to-SQL pipeline for synthetic pharma commercial analytics (prescriptions, rep activity, payer access). It runs open-weight models through Ollama, orchestrates stateful agents with LangGraph, queries DuckDB, masks PII with Presidio, and traces every run with self-hosted Arize Phoenix, with zero external LLM API calls.
+
+Developed on synthetic data and staged on an Azure VM, designed to move to an air-gapped on-prem machine unchanged.
+
+**Status:** ongoing | **Data:** 100% synthetic | **Stack:** LangGraph · Ollama · DuckDB · Presidio · Arize Phoenix · Docker
+
 
 ```
 input → ingest_mask (parse + PII mask + compliance) ──blocked──► END

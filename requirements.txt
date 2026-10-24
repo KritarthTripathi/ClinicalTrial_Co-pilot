@@ -10,6 +10,8 @@ cryptography
 pymupdf
 pandas
 duckdb
+sqlglot
+pyyaml
 arize-phoenix-otel
 openinference-instrumentation-langchain
 pytest

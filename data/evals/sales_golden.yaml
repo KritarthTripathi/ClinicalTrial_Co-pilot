@@ -1,0 +1,56 @@
+- id: q01
+  question: "Top 10 doctors by total prescriptions of our brand in the last 13 weeks"
+  reference_sql: "SELECT hcp_id FROM v_hcp_rx WHERE is_ours AND week_start > (SELECT MAX(week_start) FROM v_hcp_rx) - INTERVAL 91 DAY GROUP BY hcp_id ORDER BY SUM(trx) DESC, hcp_id LIMIT 10"
+  compare: first_col_set
+- id: q02
+  question: "Total TRx of our brand across all doctors"
+  reference_sql: "SELECT SUM(trx) FROM v_hcp_rx WHERE is_ours"
+  compare: scalar
+- id: q03
+  question: "How many calls were made in total?"
+  reference_sql: "SELECT SUM(calls) FROM v_hcp_activity"
+  compare: scalar
+- id: q04
+  question: "VAE open rate by specialty"
+  reference_sql: "SELECT specialty, SUM(vae_opened) * 1.0 / SUM(vae_sent) FROM v_hcp_activity GROUP BY specialty"
+  compare: rows_set
+- id: q05
+  question: "Total new-to-brand prescriptions NBRx of our brand by state"
+  reference_sql: "SELECT state, SUM(nbrx) FROM v_hcp_rx WHERE is_ours GROUP BY state"
+  compare: rows_set
+- id: q06
+  question: "Which 3 plans have the highest reject rate for our brand?"
+  reference_sql: "SELECT plan_id FROM v_payer_access WHERE is_ours GROUP BY plan_id ORDER BY SUM(rejected) * 1.0 / SUM(submitted) DESC LIMIT 3"
+  compare: first_col_set
+- id: q07
+  question: "Reject rate by payer channel for our brand"
+  reference_sql: "SELECT channel, SUM(rejected) * 1.0 / SUM(submitted) FROM v_payer_access WHERE is_ours GROUP BY channel"
+  compare: rows_set
+- id: q08
+  question: "Total TRx of our brand by payer channel"
+  reference_sql: "SELECT channel, SUM(trx) FROM v_hcp_rx WHERE is_ours GROUP BY channel"
+  compare: rows_set
+- id: q09
+  question: "Which 3 reps made the most calls?"
+  reference_sql: "SELECT rep_id FROM v_hcp_activity GROUP BY rep_id ORDER BY SUM(calls) DESC LIMIT 3"
+  compare: first_col_set
+- id: q10
+  question: "Which 5 doctors received the most calls?"
+  reference_sql: "SELECT hcp_id FROM v_hcp_activity GROUP BY hcp_id ORDER BY SUM(calls) DESC, hcp_id LIMIT 5"
+  compare: first_col_set
+- id: q11
+  question: "NBRx of our brand per month for the last 3 months"
+  reference_sql: "SELECT month, SUM(nbrx) FROM v_hcp_rx WHERE is_ours GROUP BY month ORDER BY month DESC LIMIT 3"
+  compare: rows_set
+- id: q12
+  question: "How many doctors received more than 20 calls?"
+  reference_sql: "SELECT COUNT(*) FROM (SELECT hcp_id FROM v_hcp_activity GROUP BY hcp_id HAVING SUM(calls) > 20)"
+  compare: scalar
+- id: q13
+  question: "Total calls and total TRx of our brand for Dermatology doctors"
+  reference_sql: "SELECT SUM(calls), SUM(trx_ours) FROM v_hcp_monthly WHERE specialty = 'Dermatology'"
+  compare: rows_set
+- id: q14
+  question: "Which plan had the most abandoned claims for our brand?"
+  reference_sql: "SELECT plan_id FROM v_payer_access WHERE is_ours GROUP BY plan_id ORDER BY SUM(abandoned) DESC LIMIT 1"
+  compare: first_col_set

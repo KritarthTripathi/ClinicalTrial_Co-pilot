@@ -1,0 +1,4 @@
+product_id,brand,is_ours,therapeutic_area
+PR01,Aurelis,True,Dermatology
+PR02,Clearon,False,Dermatology
+PR03,Psorix,False,Dermatology
