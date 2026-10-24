@@ -52,4 +52,9 @@ Phoenix UI: http://localhost:6006 (on Azure, via SSH tunnel through Bastion).
 - Pin dependencies (`pip freeze > requirements.lock`) once the stack builds.
 - Verify the Phoenix telemetry-disable variable and Azure extension names against current docs.
 
-## First metrics resulted in planted=142 leaked=57 recall=0.599 which was corrected to recall 1.000 after masking the mail Ids
+## First metrics 
+ - Resulted in planted=142 leaked=57 recall=0.599 which was corrected to recall 1.000 after masking the mail Ids
+<img width="960" height="448" alt="trace-2-phoenix-10242026-0442" src="https://github.com/user-attachments/assets/095ad96d-1dcb-4605-b9bd-f9f7ef622537" />
+
+<img width="960" height="513" alt="trace-2_1-phoenix-10242026-0442" src="https://github.com/user-attachments/assets/b9820b71-e56b-4aab-be2c-08a064c672a6" />
+
