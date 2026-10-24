@@ -1,0 +1,117 @@
+{
+ "accuracy": 0.14285714285714285,
+ "results": [
+  {
+   "id": "q01",
+   "ok": true,
+   "attempts": 1,
+   "seconds": 9.5,
+   "sql": "SELECT hcp_id FROM v_hcp_rx WHERE week_start > CAST('2025-12-29' AS DATE) - INTERVAL '91' DAY AND is_ours = TRUE GROUP BY hcp_id ORDER BY SUM(trx) DESC LIMIT 10",
+   "error": ""
+  },
+  {
+   "id": "q02",
+   "ok": false,
+   "attempts": 1,
+   "seconds": 7.8,
+   "sql": "SELECT SUM(trx) AS total_trx FROM v_hcp_rx WHERE is_ours = TRUE AND week_start > CAST('2025-12-29' AS DATE) - INTERVAL '91' DAY LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "q03",
+   "ok": false,
+   "attempts": 1,
+   "seconds": 6.6,
+   "sql": "SELECT SUM(calls) AS total_calls FROM v_hcp_activity WHERE week_start > CAST('2025-12-29' AS DATE) - INTERVAL '91' DAY LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "q04",
+   "ok": false,
+   "attempts": 3,
+   "seconds": 36.8,
+   "sql": "SELECT specialty, VAE_opened * 1.0 / VAE_sent AS VAE_open_rate FROM v_hcp_activity WHERE week_start > CAST('2025-12-29' AS DATE) - INTERVAL '91' DAY AND is_ours = TRUE GROUP BY specialty LIMIT 500",
+   "error": "SQL error: Binder Error: Referenced column \"is_ours\" not found in FROM clause!\nCandidate bindings: \"vae_opened\"\n\nLINE 1: ...start > CAST('2025-12-29' AS DATE) - INTERVAL '91' DAY AND is_ours = TRUE GROUP BY specialty LIMIT 500\n                                                                      ^^^^^^^"
+  },
+  {
+   "id": "q05",
+   "ok": false,
+   "attempts": 1,
+   "seconds": 10.5,
+   "sql": "SELECT state, SUM(nbrx) AS nbrx FROM v_hcp_rx WHERE is_ours = TRUE AND week_start > CAST('2025-12-29' AS DATE) - INTERVAL '91' DAY GROUP BY state ORDER BY state LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "q06",
+   "ok": false,
+   "attempts": 1,
+   "seconds": 19.5,
+   "sql": "SELECT plan_id, (SUM(rejected) * 1.0 / SUM(submitted)) AS reject_rate, COUNT(*) AS plan_count FROM v_payer_access WHERE is_ours = TRUE AND week_start > CAST('2025-12-29' AS DATE) - INTERVAL '91' DAY GROUP BY plan_id ORDER BY reject_rate DESC LIMIT 3",
+   "error": ""
+  },
+  {
+   "id": "q07",
+   "ok": false,
+   "attempts": 1,
+   "seconds": 11.3,
+   "sql": "SELECT channel, SUM(rejected) * 1.0 / SUM(submitted) AS reject_rate FROM v_payer_access WHERE is_ours = TRUE AND week_start > CAST('2025-12-29' AS DATE) - INTERVAL '7' DAY GROUP BY channel ORDER BY reject_rate DESC LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "q08",
+   "ok": true,
+   "attempts": 1,
+   "seconds": 27.1,
+   "sql": "SELECT channel, SUM(trx) AS total_trx FROM v_hcp_rx WHERE is_ours = TRUE GROUP BY channel LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "q09",
+   "ok": false,
+   "attempts": 1,
+   "seconds": 9.8,
+   "sql": "SELECT rep_id, SUM(calls) AS total_calls FROM v_hcp_activity WHERE week_start > CAST('2025-12-29' AS DATE) - INTERVAL '91' DAY GROUP BY rep_id ORDER BY total_calls DESC LIMIT 3",
+   "error": ""
+  },
+  {
+   "id": "q10",
+   "ok": false,
+   "attempts": 1,
+   "seconds": 10.8,
+   "sql": "SELECT hcp_id, full_name, specialty, territory_id, rep_id, week_start, month, calls FROM v_hcp_activity WHERE week_start > CAST('2025-12-29' AS DATE) - INTERVAL (13 * 7) DAY ORDER BY calls DESC LIMIT 5",
+   "error": ""
+  },
+  {
+   "id": "q11",
+   "ok": false,
+   "attempts": 2,
+   "seconds": 25.9,
+   "sql": "SELECT month, SUM(nrx) AS nbrx FROM v_hcp_rx WHERE week_start > CAST('2025-12-29' AS DATE) - INTERVAL '21' DAY AND is_ours = TRUE GROUP BY month LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "q12",
+   "ok": false,
+   "attempts": 3,
+   "seconds": 35.4,
+   "sql": "SELECT hcp_id FROM v_hcp_activity WHERE week_start > CAST('2025-12-29' AS DATE) - INTERVAL (20 * 7) DAY AND calls > 20 GROUP BY hcp_id LIMIT 500",
+   "error": "query returned no rows; check filters and date ranges"
+  },
+  {
+   "id": "q13",
+   "ok": false,
+   "attempts": 3,
+   "seconds": 98.2,
+   "sql": "SELECT v_hcp_monthly.hcp_id, SUM(v_hcp_activity.calls) AS total_calls, SUM(v_hcp_rx.trx) AS total_trx FROM v_hcp_activity JOIN v_hcp_monthly ON v_hcp_activity.hcp_id = v_hcp_monthly.hcp_id JOIN v_hcp_rx ON v_hcp_monthly.hcp_id = v_hcp_rx.hcp_id WHERE v_hcp_monthly.specialty = 'Dermatology' AND v_hcp_activity.week_start = (SELECT MAX(week_start) FROM v_hcp_activity) GROUP BY v_hcp_monthly.hcp_id LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "q14",
+   "ok": false,
+   "attempts": 1,
+   "seconds": 10.3,
+   "sql": "SELECT plan_id, SUM(abandoned) AS total_abandoned FROM v_payer_access WHERE is_ours = TRUE AND week_start > CAST('2025-12-29' AS DATE) - INTERVAL '91' DAY GROUP BY plan_id ORDER BY total_abandoned DESC LIMIT 1",
+   "error": ""
+  }
+ ]
+}
