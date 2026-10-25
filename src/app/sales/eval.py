@@ -29,6 +29,24 @@ def same(mode, got, ref):
         return False
 
 
+def relaxed(mode, got, ref):
+    """Like same(), but extra columns in the answer are tolerated (for example an echoed filter column)."""
+    if mode != "rows_set":
+        return same(mode, got, ref)
+    if len(got) != len(ref):
+        return False
+    used = set()
+    for r in ref:
+        want = {nv(v) for v in r}
+        for i, g in enumerate(got):
+            if i not in used and want <= {nv(v) for v in g}:
+                used.add(i)
+                break
+        else:
+            return False
+    return True
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int, default=0)
@@ -46,17 +64,20 @@ def main():
                         config={"configurable": {"thread_id": uuid.uuid4().hex}})
         ref = con.execute(q["reference_sql"]).fetchall()
         ok = (not st.get("error")) and same(q["compare"], st.get("rows", []), ref)
-        results.append({"id": q["id"], "ok": ok, "attempts": st.get("attempts"), "seconds": round(time.time() - t0, 1),
+        ok2 = (not st.get("error")) and relaxed(q["compare"], st.get("rows", []), ref)
+        results.append({"id": q["id"], "ok": ok, "relaxed_ok": ok2, "attempts": st.get("attempts"), "seconds": round(time.time() - t0, 1),
                         "sql": st.get("sql") or st.get("sql_raw"), "error": st.get("error", "")})
         print(f"{'PASS' if ok else 'FAIL'}  {q['id']}  {results[-1]['seconds']}s  attempts={st.get('attempts')}  {q['question'][:60]}")
     acc = sum(r["ok"] for r in results) / len(results)
     print(f"\nExecution accuracy: {acc:.0%} ({sum(r['ok'] for r in results)}/{len(results)})")
+    acc2 = sum(r["relaxed_ok"] for r in results) / len(results)
+    print(f"Relaxed accuracy (extra columns tolerated): {acc2:.0%} ({sum(r['relaxed_ok'] for r in results)}/{len(results)})")
     for r in results:
         if not r["ok"]:
             print(f"\n{r['id']} generated: {str(r['sql'])[:300]}\n   error: {r['error']}")
     stem = Path(a.file).stem
     out = "data/evals/last_run.json" if stem == "sales_golden" else f"data/evals/last_run_{stem}.json"
-    json.dump({"accuracy": acc, "results": results}, open(out, "w"), indent=1)
+    json.dump({"accuracy": acc, "relaxed_accuracy": acc2, "results": results}, open(out, "w"), indent=1)
     print("saved", out)
 
 
