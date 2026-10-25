@@ -6,7 +6,7 @@
    "ok": false,
    "attempts": 1,
    "seconds": 42.4,
-   "sql": "SELECT hcp_id, SUM(nrx) AS total_nrx FROM v_hcp_rx WHERE week_start > CAST('2025-12-29' AS DATE) - INTERVAL '91' DAY AND is_ours = TRUE GROUP BY hcp_id ORDER BY total_nrx DESC LIMIT 10",
+   "sql": "SELECT hcp_id, SUM(nrx) AS total_nrx FROM v_hcp_rxz WHERE week_start > CAST('2025-12-29' AS DATE) - INTERVAL '91' DAY AND is_ours = TRUE GROUP BY hcp_id ORDER BY total_nrx DESC LIMIT 10",
    "error": ""
   },
   {
