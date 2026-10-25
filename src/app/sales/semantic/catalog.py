@@ -57,18 +57,24 @@ def build_prompt(question: str, views: list, data_end: str) -> str:
     else:
         rules.append("Do not add ORDER BY or LIMIT unless the question asks for a ranking.")
     if not GROUPED.search(q):
-        rules.append("The question asks for overall totals: return a single row with no GROUP BY.")
+        rules.append("The question asks for overall totals: return a single row with no GROUP BY. "
+                     "Do not select or group by a column that is only used in WHERE.")
     if "our brand" in q:
         if has_is_ours:
             rules.append("Our brand is Aurelis: add is_ours = true, but ONLY for a view that lists an is_ours column.")
         else:
             rules.append("Our brand is Aurelis. Columns trx_ours and nbrx_ours already mean our brand: do NOT use is_ours.")
+    if "channel" in q:
+        rules.append("'payer channel' means the channel column (Commercial, Medicare, Medicaid). "
+                     "payer_name is the insurance company: do not use payer_name for channel questions.")
     if TIME.search(q):
         if "month" in q and "week" not in q:
             rules.append("For 'last N months' do NOT filter by date: GROUP BY month, ORDER BY month DESC, LIMIT N.")
         else:
             rules.append(f"The data ends with the week starting {data_end}. For 'last N weeks' use week_start > DATE '{data_end}' "
                          f"- INTERVAL (N*7) DAY.")
+    if TIME.search(q):
+        rules.append("Never use CURRENT_DATE or NOW(): the data is fixed in 2025.")
     if COND.search(q):
         rules.append("To count entities that meet a condition on a total, use SELECT COUNT(*) FROM (SELECT id FROM view "
                      "GROUP BY id HAVING SUM(metric) > N). Never put aggregates in WHERE.")
@@ -85,6 +91,9 @@ def build_prompt(question: str, views: list, data_end: str) -> str:
     if TIME.search(q) and "week" in q:
         ex.append(("Total calls in the last 4 weeks",
                    f"SELECT SUM(calls) FROM v_hcp_activity WHERE week_start > DATE '{data_end}' - INTERVAL 28 DAY"))
+    if TIME.search(q) and "month" in q and "week" not in q:
+        ex.append(("Total calls per month for the last 2 months",
+                   "SELECT month, SUM(calls) FROM v_hcp_activity GROUP BY month ORDER BY month DESC LIMIT 2"))
     view_text = "\n".join(f"- {v}: {VIEWS[v]['desc']} Columns: {VIEWS[v]['cols']}" for v in views)
     ex_text = "\n".join(f"Q: {a}\nSQL: {b}" for a, b in ex)
     return ("You write one DuckDB SQL query. Use ONLY these views:\n" + view_text +

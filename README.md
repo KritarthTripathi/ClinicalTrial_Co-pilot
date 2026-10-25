@@ -60,3 +60,12 @@ Phoenix UI: http://localhost:6006 (on Azure, via SSH tunnel through Bastion).
 
 <img width="960" height="513" alt="trace-2_1-phoenix-10242026-0442" src="https://github.com/user-attachments/assets/b9820b71-e56b-4aab-be2c-08a064c672a6" />
 
+## Revised metrics 
+Run	                                      Accuracy	                                        Set
+Original prompt	                            14%	                                            Baseline
+First fix	                                21%	                                            Dev set
+Dynamic rules	               50% (general) / 57% (code model)	                            Dev set
+Rules v3	                         79% dev / 80% hold-out 1	                            Hold-out 1 was fairly independent
+
+After rules v4 fix, a new holdout2 set was added.
+57% before prompt engineering, ~80% on an independent hold-out, 93% on the dev set after rule-based fixes, 100% on a second small hold-out (n=10).

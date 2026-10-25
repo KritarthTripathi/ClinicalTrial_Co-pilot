@@ -1,0 +1,85 @@
+{
+ "accuracy": 1.0,
+ "results": [
+  {
+   "id": "k01",
+   "ok": true,
+   "attempts": 1,
+   "seconds": 9.7,
+   "sql": "SELECT specialty, SUM(nbrx) AS nbrx FROM v_hcp_rx WHERE is_ours = TRUE GROUP BY specialty LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "k02",
+   "ok": true,
+   "attempts": 1,
+   "seconds": 15.5,
+   "sql": "SELECT rep_id, SUM(calls) AS total_calls FROM v_hcp_activity GROUP BY rep_id ORDER BY total_calls ASC LIMIT 1",
+   "error": ""
+  },
+  {
+   "id": "k03",
+   "ok": true,
+   "attempts": 1,
+   "seconds": 17.2,
+   "sql": "SELECT COUNT(*) FROM (SELECT plan_id FROM v_payer_access WHERE is_ours = TRUE GROUP BY plan_id HAVING SUM(rejected) > 50) LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "k04",
+   "ok": true,
+   "attempts": 1,
+   "seconds": 14.0,
+   "sql": "SELECT payer_name, SUM(trx) AS total_prescriptions FROM v_hcp_rx GROUP BY payer_name LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "k05",
+   "ok": true,
+   "attempts": 1,
+   "seconds": 16.9,
+   "sql": "SELECT month, SUM(vae_opened) * 1.0 / SUM(vae_sent) AS vae_open_rate FROM v_hcp_activity GROUP BY month LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "k06",
+   "ok": true,
+   "attempts": 1,
+   "seconds": 4.4,
+   "sql": "SELECT rep_id, SUM(vae_sent) AS total_vae_sent FROM v_hcp_activity GROUP BY rep_id LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "k07",
+   "ok": true,
+   "attempts": 1,
+   "seconds": 23.0,
+   "sql": "SELECT SUM(trx) AS total_trx FROM v_hcp_rx WHERE is_ours = TRUE AND week_start > CAST('2025-12-29' AS DATE) - INTERVAL '28' DAY LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "k08",
+   "ok": true,
+   "attempts": 1,
+   "seconds": 13.1,
+   "sql": "SELECT payer_name, SUM(rejected) * 1.0 / SUM(submitted) AS reject_rate FROM v_payer_access WHERE is_ours = TRUE GROUP BY payer_name LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "k09",
+   "ok": true,
+   "attempts": 1,
+   "seconds": 17.9,
+   "sql": "SELECT COUNT(*) FROM (SELECT hcp_id FROM v_hcp_activity GROUP BY hcp_id HAVING SUM(calls) >= 5) LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "k10",
+   "ok": true,
+   "attempts": 1,
+   "seconds": 11.1,
+   "sql": "SELECT SUM(calls) AS total_calls FROM v_hcp_activity WHERE specialty = 'Rheumatology' LIMIT 500",
+   "error": ""
+  }
+ ]
+}

@@ -1,0 +1,2 @@
+h05 | SELECT payer_name, COUNT(*) AS abandoned_claims FROM v_payer_access WHERE is_ours = TRUE GROUP BY payer_name ORDER BY abandoned_claims DESC LIMIT 2 | 
+h07 | SELECT hcp_id, SUM(nbrx) AS nbrx FROM v_hcp_rx WHERE is_ours = TRUE AND week_start > CAST('2025-12-29' AS DATE) - INTERVAL '91' DAY GROUP BY hcp_id ORDER BY nbrx DESC LIMIT 5 | 
