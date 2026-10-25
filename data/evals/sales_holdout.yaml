@@ -1,0 +1,40 @@
+- id: h01
+  question: "Total NBRx of competitor brands"
+  reference_sql: "SELECT SUM(nbrx) FROM v_hcp_rx WHERE NOT is_ours"
+  compare: scalar
+- id: h02
+  question: "Which 3 states had the most TRx of our brand?"
+  reference_sql: "SELECT state FROM v_hcp_rx WHERE is_ours GROUP BY state ORDER BY SUM(trx) DESC LIMIT 3"
+  compare: first_col_set
+- id: h03
+  question: "How many approved emails (VAE) were sent in total?"
+  reference_sql: "SELECT SUM(vae_sent) FROM v_hcp_activity"
+  compare: scalar
+- id: h04
+  question: "Total calls by territory"
+  reference_sql: "SELECT territory_id, SUM(calls) FROM v_hcp_activity GROUP BY territory_id"
+  compare: rows_set
+- id: h05
+  question: "Which 2 payers had the most abandoned claims for our brand?"
+  reference_sql: "SELECT payer_name FROM v_payer_access WHERE is_ours GROUP BY payer_name ORDER BY SUM(abandoned) DESC LIMIT 2"
+  compare: first_col_set
+- id: h06
+  question: "Total claims submitted by payer channel"
+  reference_sql: "SELECT channel, SUM(submitted) FROM v_payer_access GROUP BY channel"
+  compare: rows_set
+- id: h07
+  question: "Top 5 doctors by NBRx of our brand in the last 13 weeks"
+  reference_sql: "SELECT hcp_id FROM v_hcp_rx WHERE is_ours AND week_start > (SELECT MAX(week_start) FROM v_hcp_rx) - INTERVAL 91 DAY GROUP BY hcp_id ORDER BY SUM(nbrx) DESC, hcp_id LIMIT 5"
+  compare: first_col_set
+- id: h08
+  question: "How many reps made more than 150 calls?"
+  reference_sql: "SELECT COUNT(*) FROM (SELECT rep_id FROM v_hcp_activity GROUP BY rep_id HAVING SUM(calls) > 150)"
+  compare: scalar
+- id: h09
+  question: "VAE sent and VAE opened per specialty"
+  reference_sql: "SELECT specialty, SUM(vae_sent), SUM(vae_opened) FROM v_hcp_activity GROUP BY specialty"
+  compare: rows_set
+- id: h10
+  question: "Total TRx of our brand per month"
+  reference_sql: "SELECT month, SUM(trx) FROM v_hcp_rx WHERE is_ours GROUP BY month"
+  compare: rows_set

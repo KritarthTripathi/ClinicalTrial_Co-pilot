@@ -1,19 +1,19 @@
 {
- "accuracy": 0.5714285714285714,
+ "accuracy": 0.7857142857142857,
  "results": [
   {
    "id": "q01",
-   "ok": false,
+   "ok": true,
    "attempts": 1,
-   "seconds": 60.3,
-   "sql": "SELECT hcp_id, SUM(nrx) AS total_prescriptions FROM v_hcp_rx WHERE is_ours = TRUE GROUP BY hcp_id ORDER BY total_prescriptions DESC LIMIT 10",
+   "seconds": 42.3,
+   "sql": "SELECT hcp_id, SUM(trx) AS total_prescriptions FROM v_hcp_rx WHERE is_ours = TRUE AND week_start > CAST('2025-12-29' AS DATE) - INTERVAL '91' DAY GROUP BY hcp_id ORDER BY total_prescriptions DESC LIMIT 10",
    "error": ""
   },
   {
    "id": "q02",
    "ok": true,
    "attempts": 1,
-   "seconds": 12.9,
+   "seconds": 13.5,
    "sql": "SELECT SUM(trx) AS total_trx FROM v_hcp_rx WHERE is_ours = TRUE LIMIT 500",
    "error": ""
   },
@@ -21,7 +21,7 @@
    "id": "q03",
    "ok": true,
    "attempts": 1,
-   "seconds": 15.7,
+   "seconds": 14.9,
    "sql": "SELECT SUM(calls) AS total_calls FROM v_hcp_activity LIMIT 500",
    "error": ""
   },
@@ -29,7 +29,7 @@
    "id": "q04",
    "ok": true,
    "attempts": 1,
-   "seconds": 14.4,
+   "seconds": 16.0,
    "sql": "SELECT specialty, SUM(vae_opened) * 1.0 / SUM(vae_sent) AS vae_open_rate FROM v_hcp_activity GROUP BY specialty LIMIT 500",
    "error": ""
   },
@@ -37,7 +37,7 @@
    "id": "q05",
    "ok": true,
    "attempts": 1,
-   "seconds": 13.8,
+   "seconds": 14.2,
    "sql": "SELECT state, SUM(nbrx) AS nbrx FROM v_hcp_rx WHERE is_ours = TRUE GROUP BY state LIMIT 500",
    "error": ""
   },
@@ -45,7 +45,7 @@
    "id": "q06",
    "ok": true,
    "attempts": 1,
-   "seconds": 24.3,
+   "seconds": 20.3,
    "sql": "SELECT plan_id, SUM(rejected) * 1.0 / SUM(submitted) AS reject_rate FROM v_payer_access WHERE is_ours = TRUE GROUP BY plan_id ORDER BY reject_rate DESC LIMIT 3",
    "error": ""
   },
@@ -53,7 +53,7 @@
    "id": "q07",
    "ok": true,
    "attempts": 1,
-   "seconds": 13.6,
+   "seconds": 14.4,
    "sql": "SELECT channel, SUM(rejected) * 1.0 / SUM(submitted) AS reject_rate FROM v_payer_access WHERE is_ours = TRUE GROUP BY channel LIMIT 500",
    "error": ""
   },
@@ -61,55 +61,55 @@
    "id": "q08",
    "ok": false,
    "attempts": 1,
-   "seconds": 17.2,
-   "sql": "SELECT payer_name, channel, SUM(trx) AS trx FROM v_hcp_rx WHERE is_ours = TRUE GROUP BY payer_name, channel ORDER BY payer_name, channel LIMIT 500",
+   "seconds": 15.8,
+   "sql": "SELECT payer_name, SUM(trx) AS trx FROM v_hcp_rx WHERE is_ours = TRUE GROUP BY payer_name LIMIT 500",
    "error": ""
   },
   {
    "id": "q09",
    "ok": true,
    "attempts": 1,
-   "seconds": 14.6,
+   "seconds": 15.1,
    "sql": "SELECT rep_id, SUM(calls) AS total_calls FROM v_hcp_activity GROUP BY rep_id ORDER BY total_calls DESC LIMIT 3",
    "error": ""
   },
   {
    "id": "q10",
-   "ok": false,
+   "ok": true,
    "attempts": 1,
-   "seconds": 6.2,
-   "sql": "SELECT hcp_id, COUNT(*) AS calls_received FROM v_hcp_activity GROUP BY hcp_id ORDER BY calls_received DESC LIMIT 5",
+   "seconds": 5.2,
+   "sql": "SELECT hcp_id, SUM(calls) AS calls FROM v_hcp_activity GROUP BY hcp_id ORDER BY calls DESC LIMIT 5",
    "error": ""
   },
   {
    "id": "q11",
    "ok": false,
-   "attempts": 1,
-   "seconds": 24.1,
-   "sql": "SELECT month, SUM(nbrx) AS nbrx FROM v_hcp_rx WHERE is_ours = TRUE AND week_start > CAST('2025-12-29' AS DATE) - INTERVAL '84' DAY GROUP BY month ORDER BY month DESC LIMIT 3",
-   "error": ""
+   "attempts": 3,
+   "seconds": 42.1,
+   "sql": "SELECT month, SUM(nbrx) AS nbrx FROM v_hcp_rx WHERE is_ours = TRUE AND month >= DATE_SUB(CURRENT_DATE, INTERVAL '3' MONTH) GROUP BY month ORDER BY month DESC LIMIT 3",
+   "error": "SQL error: Binder Error: No function matches the given name and argument types 'date_sub(DATE, INTERVAL)'. You might need to add explicit type casts.\n\tCandidate functions:\n\tdate_sub(part VARCHAR, startdate DATE, enddate DATE) -> BIGINT\n\tdate_sub(part VARCHAR, startdate TIME, enddate TIME) -> BIGINT\n\tdate_sub(p"
   },
   {
    "id": "q12",
-   "ok": false,
+   "ok": true,
    "attempts": 1,
-   "seconds": 14.5,
-   "sql": "SELECT hcp_id, COUNT(*) AS call_count FROM v_hcp_activity GROUP BY hcp_id HAVING COUNT(calls) > 20 LIMIT 500",
+   "seconds": 16.3,
+   "sql": "SELECT COUNT(*) FROM (SELECT hcp_id FROM v_hcp_activity GROUP BY hcp_id HAVING SUM(calls) > 20) LIMIT 500",
    "error": ""
   },
   {
    "id": "q13",
    "ok": false,
-   "attempts": 3,
-   "seconds": 45.1,
-   "sql": "SELECT specialty, SUM(calls) AS total_calls, SUM(trx) AS total_trx FROM v_hcp_monthly WHERE specialty = 'Dermatology' AND is_ours = TRUE GROUP BY specialty LIMIT 500",
-   "error": "SQL error: Binder Error: Referenced column \"is_ours\" not found in FROM clause!\nCandidate bindings: \"trx_ours\", \"is_target\", \"nbrx_ours\"\n\nLINE 1: ... FROM v_hcp_monthly WHERE specialty = 'Dermatology' AND is_ours = TRUE GROUP BY specialty LIMIT 500\n                                                               "
+   "attempts": 1,
+   "seconds": 15.1,
+   "sql": "SELECT specialty, SUM(calls) AS total_calls, SUM(trx_ours) AS total_trx FROM v_hcp_monthly WHERE specialty = 'Dermatology' GROUP BY specialty LIMIT 500",
+   "error": ""
   },
   {
    "id": "q14",
    "ok": true,
    "attempts": 1,
-   "seconds": 18.3,
+   "seconds": 17.7,
    "sql": "SELECT plan_id, SUM(abandoned) AS abandoned_claims FROM v_payer_access WHERE is_ours = TRUE GROUP BY plan_id ORDER BY abandoned_claims DESC LIMIT 1",
    "error": ""
   }

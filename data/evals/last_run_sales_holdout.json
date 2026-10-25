@@ -1,0 +1,85 @@
+{
+ "accuracy": 0.8,
+ "results": [
+  {
+   "id": "h01",
+   "ok": true,
+   "attempts": 1,
+   "seconds": 11.5,
+   "sql": "SELECT SUM(nbrx) AS total_nbrx FROM v_hcp_rx WHERE is_ours = FALSE LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "h02",
+   "ok": true,
+   "attempts": 1,
+   "seconds": 19.3,
+   "sql": "SELECT state, SUM(trx) AS trx FROM v_hcp_rx WHERE is_ours = TRUE GROUP BY state ORDER BY trx DESC LIMIT 3",
+   "error": ""
+  },
+  {
+   "id": "h03",
+   "ok": true,
+   "attempts": 1,
+   "seconds": 10.2,
+   "sql": "SELECT SUM(vae_sent) AS total_vae_sent FROM v_hcp_activity LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "h04",
+   "ok": true,
+   "attempts": 1,
+   "seconds": 8.8,
+   "sql": "SELECT territory_id, SUM(calls) AS total_calls FROM v_hcp_activity GROUP BY territory_id LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "h05",
+   "ok": false,
+   "attempts": 1,
+   "seconds": 7.3,
+   "sql": "SELECT payer_name, COUNT(*) AS abandoned_claims FROM v_payer_access WHERE is_ours = TRUE GROUP BY payer_name ORDER BY abandoned_claims DESC LIMIT 2",
+   "error": ""
+  },
+  {
+   "id": "h06",
+   "ok": true,
+   "attempts": 1,
+   "seconds": 9.4,
+   "sql": "SELECT channel, SUM(submitted) AS total_submitted FROM v_payer_access GROUP BY channel LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "h07",
+   "ok": false,
+   "attempts": 1,
+   "seconds": 27.0,
+   "sql": "SELECT hcp_id, SUM(nbrx) AS nbrx FROM v_hcp_rx WHERE is_ours = TRUE AND week_start > CAST('2025-12-29' AS DATE) - INTERVAL '91' DAY GROUP BY hcp_id ORDER BY nbrx DESC LIMIT 5",
+   "error": ""
+  },
+  {
+   "id": "h08",
+   "ok": true,
+   "attempts": 1,
+   "seconds": 15.3,
+   "sql": "SELECT COUNT(*) FROM (SELECT rep_id FROM v_hcp_activity GROUP BY rep_id HAVING SUM(calls) > 150) LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "h09",
+   "ok": true,
+   "attempts": 1,
+   "seconds": 10.9,
+   "sql": "SELECT specialty, SUM(vae_sent) AS vae_sent, SUM(vae_opened) AS vae_opened FROM v_hcp_activity GROUP BY specialty LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "h10",
+   "ok": true,
+   "attempts": 1,
+   "seconds": 12.8,
+   "sql": "SELECT month, SUM(trx) AS trx FROM v_hcp_rx WHERE is_ours = TRUE GROUP BY month ORDER BY month LIMIT 500",
+   "error": ""
+  }
+ ]
+}

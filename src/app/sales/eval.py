@@ -32,11 +32,12 @@ def same(mode, got, ref):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--file", default=str(GOLDEN))
     ap.add_argument("--no-trace", action="store_true")
     a = ap.parse_args()
     if not a.no_trace:
         init_tracing()
-    qs = yaml.safe_load(GOLDEN.read_text())
+    qs = yaml.safe_load(Path(a.file).read_text())
     qs = qs[: a.limit] if a.limit else qs
     app, con, results = build_graph(), connect(), []
     for q in qs:
@@ -53,7 +54,10 @@ def main():
     for r in results:
         if not r["ok"]:
             print(f"\n{r['id']} generated: {str(r['sql'])[:300]}\n   error: {r['error']}")
-    json.dump({"accuracy": acc, "results": results}, open("data/evals/last_run.json", "w"), indent=1)
+    stem = Path(a.file).stem
+    out = "data/evals/last_run.json" if stem == "sales_golden" else f"data/evals/last_run_{stem}.json"
+    json.dump({"accuracy": acc, "results": results}, open(out, "w"), indent=1)
+    print("saved", out)
 
 
 if __name__ == "__main__":
