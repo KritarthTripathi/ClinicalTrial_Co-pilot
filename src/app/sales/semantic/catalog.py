@@ -50,7 +50,8 @@ def build_prompt(question: str, views: list, data_end: str) -> str:
     q = question.lower()
     has_is_ours = any("is_ours" in VIEWS[v]["cols"] for v in views)
     rules = ["Aggregate with SUM or COUNT and GROUP BY only the columns the question asks about.",
-             "Return only the columns the question asks for."]
+             "Return only the columns the question asks for.",
+             "Do not add filters the question does not mention."]
     if RANK.search(q):
         rules.append("For ranking questions GROUP BY only the entity (hcp_id, plan_id or rep_id), ORDER BY the aggregate DESC "
                      "(ASC for lowest/fewest), and LIMIT to the number asked (LIMIT 1 for 'the most').")
@@ -94,6 +95,9 @@ def build_prompt(question: str, views: list, data_end: str) -> str:
     if TIME.search(q) and "month" in q and "week" not in q:
         ex.append(("Total calls per month for the last 2 months",
                    "SELECT month, SUM(calls) FROM v_hcp_activity GROUP BY month ORDER BY month DESC LIMIT 2"))
+    if not GROUPED.search(q):
+        ex.append(("Total VAE sent for Primary Care doctors",
+                   "SELECT SUM(vae_sent) FROM v_hcp_activity WHERE specialty = 'Primary Care'"))
     view_text = "\n".join(f"- {v}: {VIEWS[v]['desc']} Columns: {VIEWS[v]['cols']}" for v in views)
     ex_text = "\n".join(f"Q: {a}\nSQL: {b}" for a, b in ex)
     return ("You write one DuckDB SQL query. Use ONLY these views:\n" + view_text +

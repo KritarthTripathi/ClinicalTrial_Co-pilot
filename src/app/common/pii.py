@@ -14,6 +14,8 @@ ENTITIES = [
 # Deterministic identifiers: any residual after masking blocks the document.
 HIGH_RISK = {"EMAIL_ADDRESS", "PHONE_NUMBER", "US_SSN", "MRN", "SUBJECT_ID", "DATE_OF_BIRTH", "IP_ADDRESS"}
 PLACEHOLDER_RE = re.compile(r"<[A-Z_]+_\d+>")
+# business terms that are NOT personal data (fictional brands, payer channels)
+ALLOW_LIST = ["Aurelis", "Clearon", "Psorix", "Medicaid", "Medicare"]
 
 
 @lru_cache(maxsize=1)
@@ -59,7 +61,7 @@ class PIIMasker:
     def mask(self, text: str) -> str:
         if not text.strip():
             return text
-        results = self.analyzer.analyze(text=text, language="en", entities=ENTITIES, score_threshold=0.4)
+        results = self.analyzer.analyze(text=text, language="en", entities=ENTITIES, score_threshold=0.4, allow_list=ALLOW_LIST)
         results = sorted(results, key=lambda r: (r.start, -(r.end - r.start),
                          PRIORITY.get(r.entity_type, 2), -r.score))
         out, pos = [], 0
@@ -84,7 +86,7 @@ def residual_scan(text: str) -> Counter:
     for line in clean.split("\n"):
         if not line.strip():
             continue
-        for r in get_analyzer().analyze(text=line, language="en", entities=ENTITIES, score_threshold=0.5):
+        for r in get_analyzer().analyze(text=line, language="en", entities=ENTITIES, score_threshold=0.5, allow_list=ALLOW_LIST):
             found[r.entity_type] += 1
     return found
 

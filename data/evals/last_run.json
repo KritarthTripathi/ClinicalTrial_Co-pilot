@@ -5,7 +5,7 @@
    "id": "q01",
    "ok": true,
    "attempts": 1,
-   "seconds": 50.8,
+   "seconds": 27.7,
    "sql": "SELECT hcp_id, SUM(trx) AS total_prescriptions FROM v_hcp_rx WHERE is_ours = TRUE AND week_start > CAST('2025-12-29' AS DATE) - INTERVAL '91' DAY GROUP BY hcp_id ORDER BY total_prescriptions DESC LIMIT 10",
    "error": ""
   },
@@ -13,7 +13,7 @@
    "id": "q02",
    "ok": true,
    "attempts": 1,
-   "seconds": 13.5,
+   "seconds": 14.5,
    "sql": "SELECT SUM(trx) AS total_trx FROM v_hcp_rx WHERE is_ours = TRUE LIMIT 500",
    "error": ""
   },
@@ -21,7 +21,7 @@
    "id": "q03",
    "ok": true,
    "attempts": 1,
-   "seconds": 16.8,
+   "seconds": 12.5,
    "sql": "SELECT SUM(calls) AS total_calls FROM v_hcp_activity LIMIT 500",
    "error": ""
   },
@@ -29,7 +29,7 @@
    "id": "q04",
    "ok": true,
    "attempts": 1,
-   "seconds": 13.8,
+   "seconds": 12.5,
    "sql": "SELECT specialty, SUM(vae_opened) * 1.0 / SUM(vae_sent) AS vae_open_rate FROM v_hcp_activity GROUP BY specialty LIMIT 500",
    "error": ""
   },
@@ -37,7 +37,7 @@
    "id": "q05",
    "ok": true,
    "attempts": 1,
-   "seconds": 14.3,
+   "seconds": 15.5,
    "sql": "SELECT state, SUM(nbrx) AS nbrx FROM v_hcp_rx WHERE is_ours = TRUE GROUP BY state LIMIT 500",
    "error": ""
   },
@@ -45,7 +45,7 @@
    "id": "q06",
    "ok": true,
    "attempts": 1,
-   "seconds": 23.7,
+   "seconds": 19.5,
    "sql": "SELECT plan_id, SUM(rejected) * 1.0 / SUM(submitted) AS reject_rate FROM v_payer_access WHERE is_ours = TRUE GROUP BY plan_id ORDER BY reject_rate DESC LIMIT 3",
    "error": ""
   },
@@ -53,7 +53,7 @@
    "id": "q07",
    "ok": true,
    "attempts": 1,
-   "seconds": 15.0,
+   "seconds": 18.0,
    "sql": "SELECT channel, SUM(rejected) * 1.0 / SUM(submitted) AS reject_rate FROM v_payer_access WHERE is_ours = TRUE GROUP BY channel LIMIT 500",
    "error": ""
   },
@@ -61,7 +61,7 @@
    "id": "q08",
    "ok": true,
    "attempts": 1,
-   "seconds": 17.3,
+   "seconds": 20.6,
    "sql": "SELECT channel, SUM(trx) AS trx FROM v_hcp_rx WHERE is_ours = TRUE GROUP BY channel LIMIT 500",
    "error": ""
   },
@@ -77,7 +77,7 @@
    "id": "q10",
    "ok": true,
    "attempts": 1,
-   "seconds": 5.1,
+   "seconds": 5.2,
    "sql": "SELECT hcp_id, SUM(calls) AS calls FROM v_hcp_activity GROUP BY hcp_id ORDER BY calls DESC LIMIT 5",
    "error": ""
   },
@@ -85,7 +85,7 @@
    "id": "q11",
    "ok": true,
    "attempts": 1,
-   "seconds": 18.7,
+   "seconds": 23.7,
    "sql": "SELECT month, SUM(nbrx) AS nbrx FROM v_hcp_rx WHERE is_ours = TRUE GROUP BY month ORDER BY month DESC LIMIT 3",
    "error": ""
   },
@@ -93,23 +93,23 @@
    "id": "q12",
    "ok": true,
    "attempts": 1,
-   "seconds": 17.0,
+   "seconds": 19.0,
    "sql": "SELECT COUNT(*) FROM (SELECT hcp_id FROM v_hcp_activity GROUP BY hcp_id HAVING SUM(calls) > 20) LIMIT 500",
    "error": ""
   },
   {
    "id": "q13",
    "ok": false,
-   "attempts": 2,
-   "seconds": 32.3,
-   "sql": "SELECT specialty, SUM(calls) AS total_calls, SUM(trx_ours) AS total_trx FROM v_hcp_monthly WHERE specialty = 'Dermatology' AND is_target = TRUE GROUP BY specialty LIMIT 500",
+   "attempts": 1,
+   "seconds": 17.7,
+   "sql": "SELECT specialty, SUM(calls) AS total_calls, SUM(trx_ours) AS total_trx FROM v_hcp_monthly WHERE specialty = 'Dermatology' GROUP BY specialty LIMIT 500",
    "error": ""
   },
   {
    "id": "q14",
    "ok": true,
    "attempts": 1,
-   "seconds": 21.6,
+   "seconds": 18.1,
    "sql": "SELECT plan_id, SUM(abandoned) AS abandoned_claims FROM v_payer_access WHERE is_ours = TRUE GROUP BY plan_id ORDER BY abandoned_claims DESC LIMIT 1",
    "error": ""
   }
