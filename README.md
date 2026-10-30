@@ -61,11 +61,44 @@ Phoenix UI: http://localhost:6006 (on Azure, via SSH tunnel through Bastion).
 <img width="960" height="513" alt="trace-2_1-phoenix-10242026-0442" src="https://github.com/user-attachments/assets/b9820b71-e56b-4aab-be2c-08a064c672a6" />
 
 ## Revised metrics 
-Run	                                      Accuracy	                                        Set
-Original prompt	                            14%	                                            Baseline
-First fix	                                21%	                                            Dev set
-Dynamic rules	               50% (general) / 57% (code model)	                            Dev set
-Rules v3	                         79% dev / 80% hold-out 1	                            Hold-out 1 was fairly independent
+Run	                       |               Accuracy	                     |                   Set                       |
+-------------------------  |  -----------------------------------------  |  -----------------------------------------  |
+Original prompt	           |                 14%	                     |                 Baseline                    |
+First fix	               |                 21%	                     |                 Dev set                     |
+Dynamic rules	           |    50% (general) / 57% (code model)	     |                 Dev set                     |
+Rules v3	               |          79% dev / 80% hold-out 1	         |        Hold-out 1 was fairly independent    |
 
 After rules v4 fix, a new holdout2 set was added.
 57% before prompt engineering, ~80% on an independent hold-out, 93% on the dev set after rule-based fixes, 100% on a second small hold-out (n=10).
+
+
+## Revised structure for scoped agentic routing
+
+The routing was enhanced to scoped agents to reduce the load of multiple datasets on a single agent. 
+Initially it is assumed the metrics would drop sligtly, but for geo-partitioned, domain specific querying it would prove to be useful when the amount of datasets concerned would increase with similar domain specific agent-moded required for different domains having completely different schema.
+
+the enhanced workflow is given below:
+
+```
+question
+  -> mask names/emails (common code, not an agent)
+  -> SUPERVISOR agent       decides: clinical | sales | out_of_scope
+       |- CLINICAL agent     (existing protocol pipeline)
+       '- SALES router agent decides: geo | hcp | activity
+            |- sales_geo       tables: territory_alignment_hierarchy, rx_report_summary_geo
+            |- sales_hcp       tables: hcp_summary_with_territory_and_tm_info, hcp_rx_summary_report, territory_alignment_hierarchy
+            '- sales_activity tables: territory_alignment_hierarchy, hcp_summary_with_territory_and_tm_info, hcp_activity_calls_vae_suggestions
+```
+
+
+On evelauting the enhanced structure the following metrics are observed:
+
+|                      Measure                      |                      Result                       |
+| ------------------------------------------------- | ------------------------------------------------- |
+| Routing, rules only (hold-out)                    | supervisor 24/25, sales router 17/18              |
+| Routing, hybrid (hold-out)                        | supervisor 24/25, sales router 16/18              |
+| SQL, each question straight to its own agent      | 95% (21/22). The one miss is d15 (activity)       |
+| SQL, one agent with all tables (--single)         | 91% (20/22)                                       |
+| SQL, full hierarchy (--e2e)                       | 91% (20/22), routing correct 21/22                |
+| SQL, planner only, no LLM (PROMPT_MODE=template)  | 100% (22/22)                                      |   
+
