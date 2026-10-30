@@ -1,0 +1,251 @@
+{
+ "mode": "direct",
+ "prompt_mode": "template",
+ "router_mode": "hybrid",
+ "accuracy": 1.0,
+ "relaxed_accuracy": 1.0,
+ "results": [
+  {
+   "id": "d01",
+   "agent": "sales_hcp",
+   "routed_to": "sales_hcp",
+   "ok": true,
+   "relaxed_ok": true,
+   "attempts": 1,
+   "seconds": 0.1,
+   "sql": "SELECT DISTINCT hcp_ref_id, hcp_full_name FROM hcp_summary_with_territory_and_tm_info WHERE address_line = '108 Cedar Road, Suite 187' LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "d02",
+   "agent": "sales_hcp",
+   "routed_to": "sales_hcp",
+   "ok": true,
+   "relaxed_ok": true,
+   "attempts": 1,
+   "seconds": 0.0,
+   "sql": "SELECT DISTINCT hcp_ref_id, hcp_full_name FROM hcp_summary_with_territory_and_tm_info WHERE area_name = 'California Area' AND product_name = 'menji' LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "d03",
+   "agent": "sales_hcp",
+   "routed_to": "sales_hcp",
+   "ok": true,
+   "relaxed_ok": true,
+   "attempts": 1,
+   "seconds": 0.0,
+   "sql": "SELECT DISTINCT hcp_ref_id, hcp_full_name FROM hcp_summary_with_territory_and_tm_info WHERE territory_manager_name = '<TERRITORY_MANAGER_NAME_1>' LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "d04",
+   "agent": "sales_hcp",
+   "routed_to": "sales_hcp",
+   "ok": true,
+   "relaxed_ok": true,
+   "attempts": 1,
+   "seconds": 0.1,
+   "sql": "SELECT DISTINCT hcp_ref_id, hcp_full_name FROM hcp_summary_with_territory_and_tm_info WHERE territory_manager_email = '<TERRITORY_MANAGER_EMAIL_47>' LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "d05",
+   "agent": "sales_hcp",
+   "routed_to": "sales_hcp",
+   "ok": true,
+   "relaxed_ok": true,
+   "attempts": 1,
+   "seconds": 0.1,
+   "sql": "SELECT hcp_ref_id, hcp_full_name, SUM(trx) AS trx FROM v_hcp_rx_latest WHERE grain_code = 'M' AND product_name = 'menji' GROUP BY hcp_ref_id, hcp_full_name ORDER BY trx DESC LIMIT 5",
+   "error": ""
+  },
+  {
+   "id": "d06",
+   "agent": "sales_hcp",
+   "routed_to": "sales_hcp",
+   "ok": true,
+   "relaxed_ok": true,
+   "attempts": 1,
+   "seconds": 0.1,
+   "sql": "SELECT hcp_ref_id, hcp_full_name, SUM(trx) AS trx FROM v_hcp_rx_latest WHERE grain_code = '13W' AND product_name = 'jalric' GROUP BY hcp_ref_id, hcp_full_name ORDER BY trx DESC LIMIT 10",
+   "error": ""
+  },
+  {
+   "id": "d07",
+   "agent": "sales_hcp",
+   "routed_to": "sales_hcp",
+   "ok": true,
+   "relaxed_ok": true,
+   "attempts": 1,
+   "seconds": 0.1,
+   "sql": "SELECT hcp_ref_id, hcp_full_name, SUM(nbrx) AS nbrx FROM v_hcp_rx_latest WHERE grain_code = '13W' AND district_name = 'Cal1 district' GROUP BY hcp_ref_id, hcp_full_name ORDER BY nbrx DESC LIMIT 1",
+   "error": ""
+  },
+  {
+   "id": "d08",
+   "agent": "sales_hcp",
+   "routed_to": "sales_hcp",
+   "ok": true,
+   "relaxed_ok": true,
+   "attempts": 1,
+   "seconds": 0.1,
+   "sql": "SELECT hcp_ref_id, hcp_full_name, product_name, trx, previous_trx, trx_change_pct FROM v_hcp_rx_trend WHERE grain_code = '13W' AND previous_trx >= 10 AND area_name = 'California Area' AND product_name = 'menji' ORDER BY trx_change_pct DESC LIMIT 5",
+   "error": ""
+  },
+  {
+   "id": "d09",
+   "agent": "sales_geo",
+   "routed_to": "sales_geo",
+   "ok": true,
+   "relaxed_ok": true,
+   "attempts": 1,
+   "seconds": 0.1,
+   "sql": "SELECT territory_name, SUM(trx) AS trx FROM v_geo_latest WHERE geo_level = 'TERRITORY' AND grain_code = '13W' AND product_name = 'flend' GROUP BY territory_name ORDER BY trx DESC LIMIT 1",
+   "error": ""
+  },
+  {
+   "id": "d10",
+   "agent": "sales_geo",
+   "routed_to": "sales_geo",
+   "ok": true,
+   "relaxed_ok": true,
+   "attempts": 1,
+   "seconds": 0.0,
+   "sql": "SELECT area_name, SUM(nbrx) AS nbrx FROM v_geo_latest WHERE geo_level = 'AREA' AND grain_code = 'M' AND division_name = 'Neuro' GROUP BY area_name ORDER BY nbrx ASC LIMIT 1",
+   "error": ""
+  },
+  {
+   "id": "d11",
+   "agent": "sales_geo",
+   "routed_to": "sales_geo",
+   "ok": true,
+   "relaxed_ok": true,
+   "attempts": 1,
+   "seconds": 0.0,
+   "sql": "SELECT district_name, SUM(trx) AS trx FROM v_geo_latest WHERE geo_level = 'DISTRICT' AND grain_code = '4W' AND product_name = 'glisol' GROUP BY district_name ORDER BY trx DESC LIMIT 1",
+   "error": ""
+  },
+  {
+   "id": "d12",
+   "agent": "sales_geo",
+   "routed_to": "sales_geo",
+   "ok": true,
+   "relaxed_ok": true,
+   "attempts": 1,
+   "seconds": 0.0,
+   "sql": "SELECT territory_name, SUM(nts) AS nts FROM v_geo_latest WHERE geo_level = 'TERRITORY' AND grain_code = 'M' AND division_name = 'Neuro' GROUP BY territory_name ORDER BY nts ASC LIMIT 1",
+   "error": ""
+  },
+  {
+   "id": "d13",
+   "agent": "sales_activity",
+   "routed_to": "sales_activity",
+   "ok": true,
+   "relaxed_ok": true,
+   "attempts": 1,
+   "seconds": 0.0,
+   "sql": "SELECT SUM(activity_count) * 100.0 / NULLIF(SUM(suggested_engagements), 0) AS reach_pct FROM v_activity_latest WHERE activity_type = 'CALL' AND grain_code = 'W' AND area_name = 'California Area' LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "d14",
+   "agent": "sales_activity",
+   "routed_to": "sales_activity",
+   "ok": true,
+   "relaxed_ok": true,
+   "attempts": 1,
+   "seconds": 0.0,
+   "sql": "SELECT SUM(activity_count) * 100.0 / NULLIF(SUM(suggested_engagements), 0) AS vae_status_pct FROM v_activity_latest WHERE activity_type = 'VAE' AND grain_code = 'W' AND district_name = 'Cal1 district' LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "d15",
+   "agent": "sales_activity",
+   "routed_to": "sales_activity",
+   "ok": true,
+   "relaxed_ok": true,
+   "attempts": 1,
+   "seconds": 0.0,
+   "sql": "SELECT hcp_ref_id, hcp_full_name, suggested_engagements - activity_count AS remaining FROM v_activity_latest WHERE activity_type = 'CALL' AND grain_code = 'W' AND territory_name = 'cal_terr_6' ORDER BY remaining DESC LIMIT 10",
+   "error": ""
+  },
+  {
+   "id": "d16",
+   "agent": "sales_activity",
+   "routed_to": "sales_activity",
+   "ok": true,
+   "relaxed_ok": true,
+   "attempts": 1,
+   "seconds": 0.0,
+   "sql": "SELECT hcp_ref_id, hcp_full_name, suggested_engagements - activity_count AS remaining FROM v_activity_latest WHERE activity_type = 'VAE' AND grain_code = '4W' AND territory_name = 'cal_terr_6' ORDER BY remaining DESC LIMIT 10",
+   "error": ""
+  },
+  {
+   "id": "d17",
+   "agent": "sales_activity",
+   "routed_to": "sales_activity",
+   "ok": true,
+   "relaxed_ok": true,
+   "attempts": 1,
+   "seconds": 0.0,
+   "sql": "SELECT SUM(activity_count) * 100.0 / NULLIF(SUM(suggested_engagements), 0) AS reach_pct FROM v_activity_latest WHERE activity_type = 'CALL' AND grain_code = 'W' AND territory_name = (SELECT territory_name FROM territory_alignment_hierarchy WHERE territory_manager_name = '<TERRITORY_MANAGER_NAME_13>') LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "d18",
+   "agent": "sales_hcp",
+   "routed_to": "sales_hcp",
+   "ok": true,
+   "relaxed_ok": true,
+   "attempts": 1,
+   "seconds": 0.0,
+   "sql": "SELECT hcp_ref_id, hcp_full_name, SUM(trx) AS trx FROM v_hcp_rx_latest WHERE grain_code = '4W' AND territory_name = (SELECT territory_name FROM territory_alignment_hierarchy WHERE territory_manager_name = '<TERRITORY_MANAGER_NAME_1>') GROUP BY hcp_ref_id, hcp_full_name ORDER BY trx DESC LIMIT 3",
+   "error": ""
+  },
+  {
+   "id": "d19",
+   "agent": "sales_geo",
+   "routed_to": "sales_geo",
+   "ok": true,
+   "relaxed_ok": true,
+   "attempts": 1,
+   "seconds": 0.0,
+   "sql": "SELECT division_name, SUM(trx) AS trx FROM v_geo_latest WHERE geo_level = 'DIVISION' AND grain_code = 'W' GROUP BY division_name ORDER BY trx DESC LIMIT 1",
+   "error": ""
+  },
+  {
+   "id": "d20",
+   "agent": "sales_geo",
+   "routed_to": "sales_geo",
+   "ok": true,
+   "relaxed_ok": true,
+   "attempts": 1,
+   "seconds": 0.0,
+   "sql": "SELECT SUM(trx) AS trx FROM v_geo_latest WHERE geo_level = 'TERRITORY' AND grain_code = 'M' AND territory_name = 'cal_terr_6' LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "d21",
+   "agent": "sales_activity",
+   "routed_to": "sales_activity",
+   "ok": true,
+   "relaxed_ok": true,
+   "attempts": 1,
+   "seconds": 0.1,
+   "sql": "SELECT SUM(activity_count) * 100.0 / NULLIF(SUM(suggested_engagements), 0) AS reach_pct FROM v_activity_latest WHERE activity_type = 'CALL' AND grain_code = 'W' AND area_name = 'California Area' AND hcp_ref_id IN (SELECT hcp_ref_id FROM hcp_summary_with_territory_and_tm_info WHERE product_name = 'menji') LIMIT 500",
+   "error": ""
+  },
+  {
+   "id": "d22",
+   "agent": "sales_hcp",
+   "routed_to": "sales_hcp",
+   "ok": true,
+   "relaxed_ok": true,
+   "attempts": 1,
+   "seconds": 0.0,
+   "sql": "SELECT hcp_ref_id, hcp_full_name, SUM(trx) AS trx FROM v_hcp_rx_latest WHERE grain_code = '13W' AND hcp_ref_id IN (SELECT hcp_ref_id FROM hcp_summary_with_territory_and_tm_info WHERE address_line = '108 Cedar Road, Suite 187') GROUP BY hcp_ref_id, hcp_full_name ORDER BY trx DESC LIMIT 5",
+   "error": ""
+  }
+ ]
+}

@@ -1,0 +1,122 @@
+- question: Which territory has the most TRx for flend?
+  route: sales
+  agent: sales_geo
+- question: Which area has the least NBRx in the latest month for the Neuro division?
+  route: sales
+  agent: sales_geo
+- question: What is the TRx of cal_terr_6 in the latest month?
+  route: sales
+  agent: sales_geo
+- question: Which district has the most TRx for glisol in the last 4 weeks?
+  route: sales
+  agent: sales_geo
+- question: Which division has the most TRx in the latest week?
+  route: sales
+  agent: sales_geo
+- question: Which 3 territories are trending up the most in TRx in California Area?
+  route: sales
+  agent: sales_geo
+- question: Which districts are in California Area?
+  route: sales
+  agent: sales_geo
+- question: How many NTS did North East Area write for brainic last month?
+  route: sales
+  agent: sales_geo
+- question: Which area writes the most jalric?
+  route: sales
+  agent: sales_geo
+- question: Show me NBRx by district for Neuro
+  route: sales
+  agent: sales_geo
+- question: Who are the top 5 prescribers of zent in the last 13 weeks?
+  route: sales
+  agent: sales_hcp
+- question: Which hcps are prescribing kolisna in Cal2 district?
+  route: sales
+  agent: sales_hcp
+- question: Which hcps are managed by Jamal Nguyen?
+  route: sales
+  agent: sales_hcp
+- question: Who is writing the most NBRx in Cal1 district?
+  route: sales
+  agent: sales_hcp
+- question: Top 5 trending HCPs in California Area for menji
+  route: sales
+  agent: sales_hcp
+- question: Which doctors write at 108 Cedar Road, Suite 187?
+  route: sales
+  agent: sales_hcp
+- question: Who prescribes the most unienz?
+  route: sales
+  agent: sales_hcp
+- question: List the doctors managed by jamal.nguyen@firm.comp.com
+  route: sales
+  agent: sales_hcp
+- question: Which prescribers are declining for perlio?
+  route: sales
+  agent: sales_hcp
+- question: Which hcps are prescribing menji?
+  route: sales
+  agent: sales_hcp
+- question: Who are my top prescribers this week?
+  route: sales
+  agent: sales_hcp
+- question: Show NTS by HCP in cal_terr_3
+  route: sales
+  agent: sales_hcp
+- question: What was my reach in the most recent week for California Area?
+  route: sales
+  agent: sales_activity
+- question: What was my VAE status in the last 4 weeks for Cal1 district?
+  route: sales
+  agent: sales_activity
+- question: How many suggested calls do I have to make this week for cal_terr_6?
+  route: sales
+  agent: sales_activity
+- question: How many suggested VAE do I have to make this month in North East Area?
+  route: sales
+  agent: sales_activity
+- question: What is my call reach for Mid Atlantic Area?
+  route: sales
+  agent: sales_activity
+- question: Which hcps still need calls this week in cal_terr_2?
+  route: sales
+  agent: sales_activity
+- question: VAE open status for cal_terr_4
+  route: sales
+  agent: sales_activity
+- question: What percentage of suggested calls did we complete last week?
+  route: sales
+  agent: sales_activity
+- question: How is my email reach in Ny3 district?
+  route: sales
+  agent: sales_activity
+- question: Reach for HCPs prescribing menji in California Area
+  route: sales
+  agent: sales_activity
+- question: Parse the protocol at data/synthetic/protocol_001.txt
+  route: clinical
+- question: List the inclusion criteria in data/synthetic/protocol_001.txt
+  route: clinical
+- question: What are the primary endpoints of the protocol data/synthetic/protocol_001.txt?
+  route: clinical
+- question: Extract the schedule of assessments from protocol_001.txt
+  route: clinical
+- question: Summarize the clinical trial protocol file data/uploads/study_xt204.pdf
+  route: clinical
+- question: I want to extract inclusion and exclusion criteria from a protocol
+  route: clinical
+- question: Which payer has the highest reject rate?
+  route: out_of_scope
+- question: Show me the call notes for HCP_000123
+  route: out_of_scope
+- question: What's the weather in Boston?
+  route: out_of_scope
+- question: Tell me a joke
+  route: out_of_scope
+- question: What is the market share of menji?
+  route: out_of_scope
+- question: Which reps hit their goal this quarter?
+  route: out_of_scope
+- question: What is the formulary tier for jalric?
+  route: out_of_scope

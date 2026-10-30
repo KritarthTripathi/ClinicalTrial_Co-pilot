@@ -1,0 +1,32 @@
+version: 1
+thresholds:
+  min_llm_confidence: 0.6
+supervisor:
+  routes:
+    clinical: "Parse a clinical-trial protocol file (needs a file path ending in .pdf, .txt or .md): inclusion and exclusion criteria, endpoints, visits, dosing."
+    sales: "Questions about prescriptions (TRx, NBRx, NTS), territories, districts, areas, divisions, HCPs, territory managers, calls and approved emails (VAE)."
+    out_of_scope: "Everything else, including payer or formulary data, claims, call notes, insights, market share, goals and general chat."
+sales_agents:
+  sales_geo:
+    description: "Prescriptions (TRx, NBRx, NTS) rolled up by territory, district, area or division: which geography has the most or least, trends by geography, and listings of districts and territories."
+    persona: "You are the sales_geo agent. You only know the geographic roll-up of prescriptions and the territory hierarchy."
+    tables: [territory_alignment_hierarchy, rx_report_summary_geo]
+    relations: [territory_alignment_hierarchy, v_geo_latest, v_geo_trend]
+    examples: ["Which territory has the most TRx for flend?", "Which area has the least NBRx in the latest month for the Neuro division?"]
+  sales_hcp:
+    description: "HCP-level prescriptions: top prescribers, who is trending, which HCPs prescribe a product in a territory, district or area, which HCPs write at an address, which HCPs a territory manager manages."
+    persona: "You are the sales_hcp agent. You only know HCPs, their office addresses, territory managers and their prescriptions."
+    tables: [hcp_summary_with_territory_and_tm_info, hcp_rx_summary_report, territory_alignment_hierarchy]
+    relations: [hcp_summary_with_territory_and_tm_info, territory_alignment_hierarchy, v_hcp_rx_latest, v_hcp_rx_trend]
+    examples: ["Who are the top 5 prescribers of menji in the past month?", "Which hcps are managed by <territory manager>?"]
+  sales_activity:
+    description: "Calls and approved emails (VAE): reach, VAE status, and how many suggested calls or VAE are still to be made."
+    persona: "You are the sales_activity agent. You only know suggested and completed calls and VAE per HCP."
+    tables: [territory_alignment_hierarchy, hcp_summary_with_territory_and_tm_info, hcp_activity_calls_vae_suggestions]
+    relations: [territory_alignment_hierarchy, hcp_summary_with_territory_and_tm_info, v_activity_latest]
+    examples: ["What was my reach in the most recent week for California Area?", "How many suggested calls do I have to make for cal_terr_6?"]
+  sales_all:
+    description: "Comparison only: one agent with every table (the earlier single-agent design)."
+    persona: ""
+    tables: all
+    relations: all

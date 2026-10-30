@@ -1,56 +1,110 @@
-- id: q01
-  question: "Top 10 doctors by total prescriptions of our brand in the last 13 weeks"
-  reference_sql: "SELECT hcp_id FROM v_hcp_rx WHERE is_ours AND week_start > (SELECT MAX(week_start) FROM v_hcp_rx) - INTERVAL 91 DAY GROUP BY hcp_id ORDER BY SUM(trx) DESC, hcp_id LIMIT 10"
+- id: d01
+  agent: sales_hcp
+  question: Which hcps are writing at the office address 108 Cedar Road, Suite 187?
+  reference_sql: SELECT DISTINCT hcp_ref_id, hcp_full_name FROM hcp_summary_with_territory_and_tm_info WHERE address_line = '108 Cedar Road, Suite 187'
   compare: first_col_set
-- id: q02
-  question: "Total TRx of our brand across all doctors"
-  reference_sql: "SELECT SUM(trx) FROM v_hcp_rx WHERE is_ours"
+- id: d02
+  agent: sales_hcp
+  question: Which hcps are prescribing menji in California Area?
+  reference_sql: SELECT DISTINCT hcp_ref_id, hcp_full_name FROM hcp_summary_with_territory_and_tm_info WHERE product_name = 'menji' AND area_name = 'California Area'
+  compare: first_col_set
+- id: d03
+  agent: sales_hcp
+  question: Which hcps are managed by Jamal Nguyen?
+  reference_sql: SELECT DISTINCT hcp_ref_id, hcp_full_name FROM hcp_summary_with_territory_and_tm_info WHERE territory_manager_name = '{mask:Jamal Nguyen}'
+  compare: first_col_set
+- id: d04
+  agent: sales_hcp
+  question: Which hcps are managed by marco.vasquez@firm.comp.com?
+  reference_sql: SELECT DISTINCT hcp_ref_id, hcp_full_name FROM hcp_summary_with_territory_and_tm_info WHERE territory_manager_email = '{mask:marco.vasquez@firm.comp.com}'
+  compare: first_col_set
+- id: d05
+  agent: sales_hcp
+  question: Top 5 prescribers of menji in the past month
+  reference_sql: SELECT hcp_ref_id, SUM(trx) AS trx FROM v_hcp_rx_latest WHERE grain_code = 'M' AND product_name = 'menji' GROUP BY hcp_ref_id ORDER BY trx DESC LIMIT 5
+  compare: first_col_set
+- id: d06
+  agent: sales_hcp
+  question: Who are the top 10 prescribers of jalric?
+  reference_sql: SELECT hcp_ref_id, SUM(trx) AS trx FROM v_hcp_rx_latest WHERE grain_code = '13W' AND product_name = 'jalric' GROUP BY hcp_ref_id ORDER BY trx DESC LIMIT 10
+  compare: first_col_set
+- id: d07
+  agent: sales_hcp
+  question: Who is writing the most NBRx in Cal1 district?
+  reference_sql: SELECT hcp_ref_id, SUM(nbrx) AS nbrx FROM v_hcp_rx_latest WHERE grain_code = '13W' AND district_name = 'Cal1 district' GROUP BY hcp_ref_id ORDER BY nbrx DESC LIMIT 1
+  compare: first_col_set
+- id: d08
+  agent: sales_hcp
+  question: Top 5 trending HCPs in California Area for menji
+  reference_sql: SELECT hcp_ref_id, trx_change_pct FROM v_hcp_rx_trend WHERE grain_code = '13W' AND previous_trx >= 10 AND product_name = 'menji' AND area_name = 'California Area' ORDER BY trx_change_pct DESC LIMIT 5
+  compare: first_col_set
+- id: d09
+  agent: sales_geo
+  question: Which territory has the most TRx for flend?
+  reference_sql: SELECT territory_name, SUM(trx) AS trx FROM v_geo_latest WHERE geo_level = 'TERRITORY' AND grain_code = '13W' AND product_name = 'flend' GROUP BY territory_name ORDER BY trx DESC LIMIT 1
+  compare: first_col_set
+- id: d10
+  agent: sales_geo
+  question: Which area has the least NBRx in the latest month for the Neuro division?
+  reference_sql: SELECT area_name, SUM(nbrx) AS nbrx FROM v_geo_latest WHERE geo_level = 'AREA' AND grain_code = 'M' AND division_name = 'Neuro' GROUP BY area_name ORDER BY nbrx ASC LIMIT 1
+  compare: first_col_set
+- id: d11
+  agent: sales_geo
+  question: Which district has the most TRx for glisol in the last 4 weeks?
+  reference_sql: SELECT district_name, SUM(trx) AS trx FROM v_geo_latest WHERE geo_level = 'DISTRICT' AND grain_code = '4W' AND product_name = 'glisol' GROUP BY district_name ORDER BY trx DESC LIMIT 1
+  compare: first_col_set
+- id: d12
+  agent: sales_geo
+  question: Which territory has the least NTS in the latest month for the Neuro division?
+  reference_sql: SELECT territory_name, SUM(nts) AS nts FROM v_geo_latest WHERE geo_level = 'TERRITORY' AND grain_code = 'M' AND division_name = 'Neuro' GROUP BY territory_name ORDER BY nts ASC LIMIT 1
+  compare: first_col_set
+- id: d13
+  agent: sales_activity
+  question: What was my reach in the most recent week for California Area?
+  reference_sql: SELECT SUM(activity_count) * 100.0 / NULLIF(SUM(suggested_engagements), 0) AS pct FROM v_activity_latest WHERE activity_type = 'CALL' AND grain_code = 'W' AND area_name = 'California Area'
   compare: scalar
-- id: q03
-  question: "How many calls were made in total?"
-  reference_sql: "SELECT SUM(calls) FROM v_hcp_activity"
+- id: d14
+  agent: sales_activity
+  question: What was my VAE status in the most recent week for Cal1 district?
+  reference_sql: SELECT SUM(activity_count) * 100.0 / NULLIF(SUM(suggested_engagements), 0) AS pct FROM v_activity_latest WHERE activity_type = 'VAE' AND grain_code = 'W' AND district_name = 'Cal1 district'
   compare: scalar
-- id: q04
-  question: "VAE open rate by specialty"
-  reference_sql: "SELECT specialty, SUM(vae_opened) * 1.0 / SUM(vae_sent) FROM v_hcp_activity GROUP BY specialty"
-  compare: rows_set
-- id: q05
-  question: "Total new-to-brand prescriptions NBRx of our brand by state"
-  reference_sql: "SELECT state, SUM(nbrx) FROM v_hcp_rx WHERE is_ours GROUP BY state"
-  compare: rows_set
-- id: q06
-  question: "Which 3 plans have the highest reject rate for our brand?"
-  reference_sql: "SELECT plan_id FROM v_payer_access WHERE is_ours GROUP BY plan_id ORDER BY SUM(rejected) * 1.0 / SUM(submitted) DESC LIMIT 3"
+- id: d15
+  agent: sales_activity
+  question: How many suggested calls do I have to make in the most recent week for cal_terr_6?
+  reference_sql: SELECT hcp_ref_id, suggested_engagements - activity_count AS remaining FROM v_activity_latest WHERE activity_type = 'CALL' AND grain_code = 'W' AND territory_name = 'cal_terr_6' ORDER BY remaining DESC LIMIT 10
   compare: first_col_set
-- id: q07
-  question: "Reject rate by payer channel for our brand"
-  reference_sql: "SELECT channel, SUM(rejected) * 1.0 / SUM(submitted) FROM v_payer_access WHERE is_ours GROUP BY channel"
-  compare: rows_set
-- id: q08
-  question: "Total TRx of our brand by payer channel"
-  reference_sql: "SELECT channel, SUM(trx) FROM v_hcp_rx WHERE is_ours GROUP BY channel"
-  compare: rows_set
-- id: q09
-  question: "Which 3 reps made the most calls?"
-  reference_sql: "SELECT rep_id FROM v_hcp_activity GROUP BY rep_id ORDER BY SUM(calls) DESC LIMIT 3"
+- id: d16
+  agent: sales_activity
+  question: How many suggested VAE do I have to make in the last 4 weeks for cal_terr_6?
+  reference_sql: SELECT hcp_ref_id, suggested_engagements - activity_count AS remaining FROM v_activity_latest WHERE activity_type = 'VAE' AND grain_code = '4W' AND territory_name = 'cal_terr_6' ORDER BY remaining DESC LIMIT 10
   compare: first_col_set
-- id: q10
-  question: "Which 5 doctors received the most calls?"
-  reference_sql: "SELECT hcp_id FROM v_hcp_activity GROUP BY hcp_id ORDER BY SUM(calls) DESC, hcp_id LIMIT 5"
-  compare: first_col_set
-- id: q11
-  question: "NBRx of our brand per month for the last 3 months"
-  reference_sql: "SELECT month, SUM(nbrx) FROM v_hcp_rx WHERE is_ours GROUP BY month ORDER BY month DESC LIMIT 3"
-  compare: rows_set
-- id: q12
-  question: "How many doctors received more than 20 calls?"
-  reference_sql: "SELECT COUNT(*) FROM (SELECT hcp_id FROM v_hcp_activity GROUP BY hcp_id HAVING SUM(calls) > 20)"
+- id: d17
+  agent: sales_activity
+  question: What was my reach in the most recent week for the territory managed by Yusuf Kapoor?
+  reference_sql: SELECT SUM(activity_count) * 100.0 / NULLIF(SUM(suggested_engagements), 0) AS pct FROM v_activity_latest WHERE activity_type = 'CALL' AND grain_code = 'W' AND territory_name = (SELECT territory_name FROM territory_alignment_hierarchy WHERE territory_manager_name = '{mask:Yusuf Kapoor}')
   compare: scalar
-- id: q13
-  question: "Total calls and total TRx of our brand for Dermatology doctors"
-  reference_sql: "SELECT SUM(calls), SUM(trx_ours) FROM v_hcp_monthly WHERE specialty = 'Dermatology'"
-  compare: rows_set
-- id: q14
-  question: "Which plan had the most abandoned claims for our brand?"
-  reference_sql: "SELECT plan_id FROM v_payer_access WHERE is_ours GROUP BY plan_id ORDER BY SUM(abandoned) DESC LIMIT 1"
+- id: d18
+  agent: sales_hcp
+  question: Who are the top 3 prescribers in the last 4 weeks for the territory managed by Jamal Nguyen?
+  reference_sql: SELECT hcp_ref_id, SUM(trx) AS trx FROM v_hcp_rx_latest WHERE grain_code = '4W' AND territory_name = (SELECT territory_name FROM territory_alignment_hierarchy WHERE territory_manager_name = '{mask:Jamal Nguyen}') GROUP BY hcp_ref_id ORDER BY trx DESC LIMIT 3
+  compare: first_col_set
+- id: d19
+  agent: sales_geo
+  question: Which division has the most TRx in the latest week?
+  reference_sql: SELECT division_name, SUM(trx) AS trx FROM v_geo_latest WHERE geo_level = 'DIVISION' AND grain_code = 'W' GROUP BY division_name ORDER BY trx DESC LIMIT 1
+  compare: first_col_set
+- id: d20
+  agent: sales_geo
+  question: What is the TRx of cal_terr_6 in the latest month?
+  reference_sql: SELECT SUM(trx) AS trx FROM v_geo_latest WHERE geo_level = 'TERRITORY' AND grain_code = 'M' AND territory_name = 'cal_terr_6'
+  compare: scalar
+- id: d21
+  agent: sales_activity
+  question: What was my reach in the most recent week for HCPs prescribing menji in California Area?
+  reference_sql: SELECT SUM(activity_count) * 100.0 / NULLIF(SUM(suggested_engagements), 0) AS pct FROM v_activity_latest WHERE activity_type = 'CALL' AND grain_code = 'W' AND area_name = 'California Area' AND hcp_ref_id IN (SELECT hcp_ref_id FROM hcp_summary_with_territory_and_tm_info WHERE product_name = 'menji')
+  compare: scalar
+- id: d22
+  agent: sales_hcp
+  question: Who are the top 5 prescribers in the last 13 weeks at the office address 108 Cedar Road, Suite 187?
+  reference_sql: SELECT hcp_ref_id, SUM(trx) AS trx FROM v_hcp_rx_latest WHERE grain_code = '13W' AND hcp_ref_id IN (SELECT hcp_ref_id FROM hcp_summary_with_territory_and_tm_info WHERE address_line = '108 Cedar Road, Suite 187') GROUP BY hcp_ref_id ORDER BY trx DESC LIMIT 5
   compare: first_col_set

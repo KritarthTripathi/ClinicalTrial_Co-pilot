@@ -1,12 +1,19 @@
-CREATE TABLE dim_hcp(hcp_id VARCHAR PRIMARY KEY, npi VARCHAR, full_name VARCHAR, specialty VARCHAR,
-                     state VARCHAR, territory_id VARCHAR, decile INTEGER, is_target BOOLEAN);
-CREATE TABLE dim_product(product_id VARCHAR PRIMARY KEY, brand VARCHAR, is_ours BOOLEAN, therapeutic_area VARCHAR);
-CREATE TABLE dim_payer(plan_id VARCHAR PRIMARY KEY, payer_name VARCHAR, channel VARCHAR, lives INTEGER);
-CREATE TABLE fact_rx(week_start DATE, hcp_id VARCHAR, product_id VARCHAR, plan_id VARCHAR,
-                     nbrx INTEGER, nrx INTEGER, trx INTEGER);
-CREATE TABLE fact_activity(activity_id VARCHAR, activity_date DATE, hcp_id VARCHAR, rep_id VARCHAR,
-                           product_id VARCHAR, activity_type VARCHAR, status VARCHAR, notes_text VARCHAR);
-CREATE TABLE fact_formulary(plan_id VARCHAR, product_id VARCHAR, effective_date DATE, tier INTEGER,
-                            pa_required BOOLEAN, step_edit BOOLEAN);
-CREATE TABLE fact_claims(week_start DATE, plan_id VARCHAR, product_id VARCHAR,
-                         submitted INTEGER, paid INTEGER, rejected INTEGER, abandoned INTEGER);
+CREATE TABLE hcp_summary_with_territory_and_tm_info(
+  hcp_ref_id VARCHAR, hcp_full_name VARCHAR, address_line VARCHAR, city VARCHAR, state VARCHAR,
+  territory_name VARCHAR, district_name VARCHAR, area_name VARCHAR, division_name VARCHAR,
+  territory_manager_name VARCHAR, territory_manager_email VARCHAR, product_name VARCHAR);
+CREATE TABLE hcp_rx_summary_report(
+  hcp_ref_id VARCHAR, hcp_full_name VARCHAR, territory_name VARCHAR, district_name VARCHAR, area_name VARCHAR,
+  division_name VARCHAR, product_name VARCHAR, trx INTEGER, nbrx INTEGER, nts INTEGER, grain_code VARCHAR,
+  grain_start_date DATE, grain_end_date DATE, previous_start_date DATE, previous_end_date DATE);
+CREATE TABLE hcp_activity_calls_vae_suggestions(
+  hcp_ref_id VARCHAR, hcp_full_name VARCHAR, territory_name VARCHAR, district_name VARCHAR, area_name VARCHAR,
+  division_name VARCHAR, activity_type VARCHAR, suggested_engagements INTEGER, activity_count INTEGER, grain_code VARCHAR,
+  grain_start_date DATE, grain_end_date DATE, previous_start_date DATE, previous_end_date DATE);
+CREATE TABLE territory_alignment_hierarchy(
+  area_name VARCHAR, district_name VARCHAR, territory_name VARCHAR, division_name VARCHAR, state VARCHAR,
+  territory_manager_name VARCHAR, territory_manager_email VARCHAR);
+CREATE TABLE rx_report_summary_geo(
+  geo_level VARCHAR, area_name VARCHAR, district_name VARCHAR, territory_name VARCHAR, division_name VARCHAR,
+  product_name VARCHAR, trx INTEGER, nbrx INTEGER, nts INTEGER, grain_code VARCHAR,
+  grain_start_date DATE, grain_end_date DATE, previous_start_date DATE, previous_end_date DATE);

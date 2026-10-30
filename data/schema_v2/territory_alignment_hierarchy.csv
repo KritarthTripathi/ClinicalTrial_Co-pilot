@@ -1,0 +1,49 @@
+area_name,district_name,territory_name,division_name,state,territory_manager_name,territory_manager_email
+California Area,Cal1 district,cal_terr_1,CMH,CA,Kevin Quispe,kevin.quispe@firm.comp.com
+California Area,Cal1 district,cal_terr_2,GI,CA,Yusuf Kapoor,yusuf.kapoor@firm.comp.com
+California Area,Cal1 district,cal_terr_3,Neuro,CA,Zara Brennan,zara.brennan@firm.comp.com
+California Area,Cal2 district,cal_terr_4,OBU,CA,Bruno Ziegler,bruno.ziegler@firm.comp.com
+California Area,Cal2 district,cal_terr_5,IMM,CA,Fatima Abbott,fatima.abbott@firm.comp.com
+California Area,Cal2 district,cal_terr_6,CMH,CA,Jamal Nguyen,jamal.nguyen@firm.comp.com
+California Area,Cal3 district,cal_terr_7,Neuro,CA,Keiko Silva,keiko.silva@firm.comp.com
+California Area,Cal3 district,cal_terr_8,OBU,CA,Fatima Santos,fatima.santos@firm.comp.com
+California Area,Cal3 district,cal_terr_9,GI,CA,Grace Park,grace.park@firm.comp.com
+California Area,Cal4 district,cal_terr_10,IMM,CA,Ethan Reyes,ethan.reyes@firm.comp.com
+California Area,Cal4 district,cal_terr_11,CMH,CA,Marco Vasquez,marco.vasquez@firm.comp.com
+California Area,Cal4 district,cal_terr_12,OBU,CA,Farid Gupta,farid.gupta@firm.comp.com
+Mid Atlantic Area,Mid1 district,mid_terr_1,CMH,PA,Yusuf Gupta,yusuf.gupta@firm.comp.com
+Mid Atlantic Area,Mid1 district,mid_terr_2,GI,PA,Zara Silva,zara.silva@firm.comp.com
+Mid Atlantic Area,Mid1 district,mid_terr_3,Neuro,PA,Tara Morales,tara.morales@firm.comp.com
+Mid Atlantic Area,Mid2 district,mid_terr_4,OBU,NJ,Farid Young,farid.young@firm.comp.com
+Mid Atlantic Area,Mid2 district,mid_terr_5,IMM,NJ,Mei Morales,mei.morales@firm.comp.com
+Mid Atlantic Area,Mid2 district,mid_terr_6,CMH,NJ,Zara Jensen,zara.jensen@firm.comp.com
+Mid Atlantic Area,Mid3 district,mid_terr_7,Neuro,MD,Gabriel Walsh,gabriel.walsh@firm.comp.com
+Mid Atlantic Area,Mid3 district,mid_terr_8,OBU,MD,Quinn Lindqvist,quinn.lindqvist@firm.comp.com
+Mid Atlantic Area,Mid3 district,mid_terr_9,GI,MD,Isabel Larsen,isabel.larsen@firm.comp.com
+Mid Atlantic Area,Mid4 district,mid_terr_10,IMM,VA,Lena Novak,lena.novak@firm.comp.com
+Mid Atlantic Area,Mid4 district,mid_terr_11,CMH,VA,Divya Young,divya.young@firm.comp.com
+Mid Atlantic Area,Mid4 district,mid_terr_12,OBU,VA,Vera Ivanova,vera.ivanova@firm.comp.com
+New York Area,Ny1 district,ny_terr_1,CMH,NY,Andre Morales,andre.morales@firm.comp.com
+New York Area,Ny1 district,ny_terr_2,GI,NY,Hana Obrien,hana.obrien@firm.comp.com
+New York Area,Ny1 district,ny_terr_3,Neuro,NY,Julia Castillo,julia.castillo@firm.comp.com
+New York Area,Ny2 district,ny_terr_4,OBU,NY,Tara Silva,tara.silva@firm.comp.com
+New York Area,Ny2 district,ny_terr_5,IMM,NY,Nikolai Reyes,nikolai.reyes@firm.comp.com
+New York Area,Ny2 district,ny_terr_6,CMH,NY,Carlos Fischer,carlos.fischer@firm.comp.com
+New York Area,Ny3 district,ny_terr_7,Neuro,NY,Rosa Lindqvist,rosa.lindqvist@firm.comp.com
+New York Area,Ny3 district,ny_terr_8,OBU,NY,Nikolai Weber,nikolai.weber@firm.comp.com
+New York Area,Ny3 district,ny_terr_9,GI,NY,Umar Ivanova,umar.ivanova@firm.comp.com
+New York Area,Ny4 district,ny_terr_10,IMM,NY,Kevin Yamada,kevin.yamada@firm.comp.com
+New York Area,Ny4 district,ny_terr_11,CMH,NY,Lena Vasquez,lena.vasquez@firm.comp.com
+New York Area,Ny4 district,ny_terr_12,OBU,NY,Yusuf Jensen,yusuf.jensen@firm.comp.com
+North East Area,Ne1 district,ne_terr_1,CMH,MA,Jamal Takahashi,jamal.takahashi@firm.comp.com
+North East Area,Ne1 district,ne_terr_2,GI,MA,Tara Eriksen,tara.eriksen@firm.comp.com
+North East Area,Ne1 district,ne_terr_3,Neuro,MA,Grace Larsen,grace.larsen@firm.comp.com
+North East Area,Ne2 district,ne_terr_4,OBU,CT,Ivan Dimitrov,ivan.dimitrov@firm.comp.com
+North East Area,Ne2 district,ne_terr_5,IMM,CT,Ximena Ivanova,ximena.ivanova@firm.comp.com
+North East Area,Ne2 district,ne_terr_6,CMH,CT,Nikolai Nguyen,nikolai.nguyen@firm.comp.com
+North East Area,Ne3 district,ne_terr_7,Neuro,RI,Chen Weber,chen.weber@firm.comp.com
+North East Area,Ne3 district,ne_terr_8,OBU,RI,Kevin Morales,kevin.morales@firm.comp.com
+North East Area,Ne3 district,ne_terr_9,GI,RI,Ximena Vasquez,ximena.vasquez@firm.comp.com
+North East Area,Ne4 district,ne_terr_10,IMM,ME,Zara Abbott,zara.abbott@firm.comp.com
+North East Area,Ne4 district,ne_terr_11,CMH,ME,Keiko Nguyen,keiko.nguyen@firm.comp.com
+North East Area,Ne4 district,ne_terr_12,OBU,ME,Isabel Varga,isabel.varga@firm.comp.com
