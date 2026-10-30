@@ -1,44 +1,55 @@
-"""Checks the masked database: no planted private strings, and planted stories are findable."""
-import json
+"""Checks the masked schema-v2 database: row counts, no personal strings, reconciliation across levels, views."""
+import re
 import sys
 from pathlib import Path
 
-import duckdb
+import pandas as pd
 
-from app.common.config import settings
-
-t = json.load(open("data/synthetic_pharma/planted_truth.json"))
-con = duckdb.connect(str(Path(settings.work_dir) / "pharma.duckdb"), read_only=True)
-ok = True
-
-
-def check(name, cond, detail=""):
-    global ok
-    ok = ok and bool(cond)
-    print(("PASS  " if cond else "FAIL  ") + name + (f"   [{detail}]" if detail else ""))
+SRC = Path("data/schema_v2")
+EXPECTED = {"hcp_summary_with_territory_and_tm_info": 500, "hcp_rx_summary_report": 6000, "hcp_activity_calls_vae_suggestions": 6456,
+            "territory_alignment_hierarchy": 48, "rx_report_summary_geo": 3852}
+VIEWS = {"v_hcp_rx_latest": 2000, "v_hcp_rx_trend": 2000, "v_activity_latest": 2152, "v_geo_latest": 1284, "v_geo_trend": 1284}
 
 
-for tbl in ["dim_hcp", "fact_rx", "fact_activity", "fact_claims", "fact_formulary"]:
-    n = con.execute(f"SELECT COUNT(*) FROM {tbl}").fetchone()[0]
-    check(f"{tbl} has rows", n > 0, str(n))
+def main(con) -> bool:
+    ok_all = True
 
-blob = " ".join(r[0] for q in ("SELECT full_name FROM dim_hcp", "SELECT npi FROM dim_hcp",
-                               "SELECT notes_text FROM fact_activity") for r in con.execute(q).fetchall())
-planted = t["hcp_names"] + t["npis"] + t["patient_names"] + t["phones"] + t["emails"]
-leaks = [p for p in planted if p in blob]
-check("no planted private strings in the database", not leaks, f"{len(planted)} planted, {len(leaks)} leaked: {leaks[:5]}")
+    def check(name, cond, detail=""):
+        nonlocal ok_all
+        ok_all = ok_all and bool(cond)
+        print(("PASS  " if cond else "FAIL  ") + name + (f"   [{detail}]" if detail else ""))
 
-top = {r[0] for r in con.execute("SELECT hcp_id FROM v_hcp_activity GROUP BY hcp_id ORDER BY SUM(calls) DESC LIMIT 10").fetchall()}
-check("10 planted high-call doctors are the top 10 by calls", set(t["flat_hcps"]) == top)
-low = {r[0] for r in con.execute("SELECT rep_id FROM v_hcp_activity GROUP BY rep_id ORDER BY SUM(calls) ASC LIMIT 2").fetchall()}
-check("2 planted low-reach reps have the fewest calls", low == set(t["low_reach_reps"]), str(sorted(low)))
+    one = lambda sql: con.execute(sql).fetchone()[0]
+    for t, n in {**EXPECTED, **VIEWS}.items():
+        check(f"{t} has {n} rows", one(f"SELECT COUNT(*) FROM {t}") == n, str(one(f"SELECT COUNT(*) FROM {t}")))
+    # no real HCP names, manager names or emails anywhere in the database
+    originals = set()
+    for t, cols in {"hcp_summary_with_territory_and_tm_info": ["hcp_full_name", "territory_manager_name", "territory_manager_email"],
+                    "territory_alignment_hierarchy": ["territory_manager_name", "territory_manager_email"]}.items():
+        for c in cols:
+            originals |= set(pd.read_csv(SRC / f"{t}.csv")[c].astype(str))
+    blob = " ".join(r[0] for t, c in (("hcp_summary_with_territory_and_tm_info", "hcp_full_name"), ("hcp_summary_with_territory_and_tm_info", "territory_manager_name"),
+                                      ("hcp_summary_with_territory_and_tm_info", "territory_manager_email"), ("hcp_rx_summary_report", "hcp_full_name"),
+                                      ("hcp_activity_calls_vae_suggestions", "hcp_full_name"), ("territory_alignment_hierarchy", "territory_manager_name"),
+                                      ("territory_alignment_hierarchy", "territory_manager_email"))
+                    for r in con.execute(f"SELECT DISTINCT {c} FROM {t}").fetchall())
+    leaks = [o for o in originals if o in blob]
+    check("no real HCP name, manager name or email in the database", not leaks, f"{len(originals)} checked, {len(leaks)} leaked")
+    names = [r[0] for r in con.execute("SELECT DISTINCT hcp_full_name FROM hcp_rx_summary_report").fetchall()]
+    check("hcp_full_name holds codes like <HCP_FULL_NAME_n>", all(re.fullmatch(r"<HCP_FULL_NAME_\d+>", n) for n in names))
+    # reconciliation: every geo level adds up to the HCP-level total (latest period, per grain)
+    for g in ("W", "4W", "M", "13W"):
+        total = one(f"SELECT SUM(trx) FROM v_hcp_rx_latest WHERE grain_code = '{g}'")
+        for lvl in ("TERRITORY", "DISTRICT", "AREA", "DIVISION"):
+            check(f"geo {lvl} {g} total equals HCP total", one(f"SELECT SUM(trx) FROM v_geo_latest WHERE geo_level = '{lvl}' AND grain_code = '{g}'") == total)
+    check("every HCP territory exists in the alignment table", one("SELECT COUNT(DISTINCT territory_name) FROM hcp_summary_with_territory_and_tm_info WHERE territory_name NOT IN (SELECT territory_name FROM territory_alignment_hierarchy)") == 0)
+    check("latest period ends 2026-01-29 for every grain", one("SELECT COUNT(DISTINCT grain_end_date) FROM v_hcp_rx_latest") == 1 and str(one("SELECT MAX(grain_end_date) FROM v_hcp_rx_latest"))[:10] == "2026-01-29")
+    check("trend views have a previous value for every latest row", one("SELECT COUNT(*) FROM v_hcp_rx_trend WHERE previous_trx IS NULL") == 0)
+    print("\nALL CHECKS PASSED" if ok_all else "\nSOME CHECKS FAILED")
+    return ok_all
 
-eff = t["pa_plan"]["effective_date"]
-rr = con.execute(f"""SELECT SUM(CASE WHEN week_start < DATE '{eff}' THEN rejected END) * 1.0 / SUM(CASE WHEN week_start < DATE '{eff}' THEN submitted END),
-                            SUM(CASE WHEN week_start >= DATE '{eff}' THEN rejected END) * 1.0 / SUM(CASE WHEN week_start >= DATE '{eff}' THEN submitted END)
-                     FROM v_payer_access WHERE plan_id = 'P04' AND is_ours""").fetchone()
-check("plan P04 reject rate jumps after prior authorization", rr[0] < 0.12 and rr[1] > 0.2, f"before {rr[0]:.3f}, after {rr[1]:.3f}")
-pa = con.execute("SELECT MAX(CASE WHEN pa_required THEN 1 ELSE 0 END) FROM v_payer_access WHERE plan_id = 'P04' AND is_ours").fetchone()[0]
-check("formulary view shows PA on plan P04", pa == 1)
-print("\nALL CHECKS PASSED" if ok else "\nSOME CHECKS FAILED")
-sys.exit(0 if ok else 1)
+
+if __name__ == "__main__":
+    import duckdb
+    from app.common.config import settings
+    sys.exit(0 if main(duckdb.connect(str(Path(settings.work_dir) / "pharma.duckdb"), read_only=True)) else 1)

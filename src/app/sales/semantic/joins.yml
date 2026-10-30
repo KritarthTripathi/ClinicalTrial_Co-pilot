@@ -1,0 +1,289 @@
+# Proposed by scripts/discover_joins.py. Set approved: false to disable a join. Agents use only approved joins.
+version: 1
+tables:
+  hcp_summary_with_territory_and_tm_info:
+    natural_key:
+    - hcp_ref_id
+    - product_name
+    context: []
+    metrics: []
+    rows: 500
+  hcp_rx_summary_report:
+    natural_key:
+    - hcp_ref_id
+    - product_name
+    - grain_code
+    - grain_end_date
+    context:
+    - grain_code
+    - grain_end_date
+    metrics:
+    - trx
+    - nbrx
+    - nts
+    rows: 6000
+  hcp_activity_calls_vae_suggestions:
+    natural_key:
+    - hcp_ref_id
+    - activity_type
+    - grain_code
+    - grain_end_date
+    context:
+    - grain_code
+    - grain_end_date
+    - activity_type
+    metrics:
+    - suggested_engagements
+    - activity_count
+    rows: 6456
+  territory_alignment_hierarchy:
+    natural_key:
+    - territory_name
+    context: []
+    metrics: []
+    rows: 48
+  rx_report_summary_geo:
+    natural_key:
+    - geo_level
+    - area_name
+    - district_name
+    - product_name
+    - grain_code
+    - grain_end_date
+    context:
+    - grain_code
+    - grain_end_date
+    - geo_level
+    metrics:
+    - trx
+    - nbrx
+    - nts
+    rows: 3852
+joins:
+- id: J01
+  one: hcp_summary_with_territory_and_tm_info
+  many: hcp_rx_summary_report
+  'on':
+  - hcp_ref_id
+  - product_name
+  cardinality: one_to_one
+  safe_as: join
+  many_side_match_rate: 1.0
+  one_side_coverage: 1.0
+  requires_filter: null
+  pattern: hcp_summary_with_territory_and_tm_info a JOIN hcp_rx_summary_report b ON a.hcp_ref_id = b.hcp_ref_id AND a.product_name = b.product_name
+  note: 'Unique only within one grain_code/grain_end_date: filter these (the *_latest views already hold one period).'
+  approved: true
+- id: J02
+  one: hcp_activity_calls_vae_suggestions
+  many: hcp_summary_with_territory_and_tm_info
+  'on':
+  - hcp_ref_id
+  cardinality: one_to_many
+  safe_as: semi_join
+  many_side_match_rate: 1.0
+  one_side_coverage: 1.0
+  requires_filter: null
+  pattern: hcp_activity_calls_vae_suggestions WHERE hcp_ref_id IN (SELECT hcp_ref_id FROM hcp_summary_with_territory_and_tm_info WHERE <filter>)
+  note: 'hcp_activity_calls_vae_suggestions holds numbers that would be counted several times after a JOIN; use  WHERE key IN (SELECT key FROM ...)  instead. Unique only within one activity_type/grain_code/grain_end_date:
+    filter these (the *_latest views already hold one period).'
+  approved: true
+- id: J03
+  one: territory_alignment_hierarchy
+  many: hcp_summary_with_territory_and_tm_info
+  'on':
+  - territory_name
+  cardinality: one_to_many
+  safe_as: join
+  many_side_match_rate: 1.0
+  one_side_coverage: 1.0
+  requires_filter: null
+  pattern: territory_alignment_hierarchy a JOIN hcp_summary_with_territory_and_tm_info b ON a.territory_name = b.territory_name
+  note: ''
+  approved: true
+- id: J04
+  one: hcp_activity_calls_vae_suggestions
+  many: hcp_rx_summary_report
+  'on':
+  - hcp_ref_id
+  cardinality: one_to_many
+  safe_as: semi_join
+  many_side_match_rate: 1.0
+  one_side_coverage: 1.0
+  requires_filter: null
+  pattern: hcp_activity_calls_vae_suggestions WHERE hcp_ref_id IN (SELECT hcp_ref_id FROM hcp_rx_summary_report WHERE <filter>)
+  note: 'hcp_activity_calls_vae_suggestions holds numbers that would be counted several times after a JOIN; use  WHERE key IN (SELECT key FROM ...)  instead. Unique only within one activity_type/grain_code/grain_end_date:
+    filter these (the *_latest views already hold one period).'
+  approved: true
+- id: J05
+  one: territory_alignment_hierarchy
+  many: hcp_rx_summary_report
+  'on':
+  - territory_name
+  cardinality: one_to_many
+  safe_as: join
+  many_side_match_rate: 1.0
+  one_side_coverage: 1.0
+  requires_filter: null
+  pattern: territory_alignment_hierarchy a JOIN hcp_rx_summary_report b ON a.territory_name = b.territory_name
+  note: 'Unique only within one grain_code/grain_end_date: filter these (the *_latest views already hold one period).'
+  approved: true
+- id: J06
+  one: territory_alignment_hierarchy
+  many: hcp_activity_calls_vae_suggestions
+  'on':
+  - territory_name
+  cardinality: one_to_many
+  safe_as: join
+  many_side_match_rate: 1.0
+  one_side_coverage: 1.0
+  requires_filter: null
+  pattern: territory_alignment_hierarchy a JOIN hcp_activity_calls_vae_suggestions b ON a.territory_name = b.territory_name
+  note: 'Unique only within one activity_type/grain_code/grain_end_date: filter these (the *_latest views already hold one period).'
+  approved: true
+removed_by_owner:
+- one: territory_alignment_hierarchy
+  many: rx_report_summary_geo
+  'on':
+  - territory_name
+rejected:
+- tables:
+  - hcp_summary_with_territory_and_tm_info
+  - hcp_rx_summary_report
+  'on':
+  - hcp_ref_id
+  reason: many_to_many
+  suggestion: do not join; filter with  IN (SELECT ... )  or reduce one side to one row per key first
+- tables:
+  - hcp_summary_with_territory_and_tm_info
+  - hcp_rx_summary_report
+  'on':
+  - territory_name
+  reason: many_to_many
+  suggestion: do not join; filter with  IN (SELECT ... )  or reduce one side to one row per key first
+- tables:
+  - hcp_summary_with_territory_and_tm_info
+  - hcp_rx_summary_report
+  'on':
+  - district_name
+  reason: many_to_many
+  suggestion: do not join; filter with  IN (SELECT ... )  or reduce one side to one row per key first
+- tables:
+  - hcp_summary_with_territory_and_tm_info
+  - hcp_rx_summary_report
+  'on':
+  - product_name
+  reason: many_to_many
+  suggestion: do not join; filter with  IN (SELECT ... )  or reduce one side to one row per key first
+- tables:
+  - hcp_summary_with_territory_and_tm_info
+  - hcp_activity_calls_vae_suggestions
+  'on':
+  - territory_name
+  reason: many_to_many
+  suggestion: do not join; filter with  IN (SELECT ... )  or reduce one side to one row per key first
+- tables:
+  - hcp_summary_with_territory_and_tm_info
+  - hcp_activity_calls_vae_suggestions
+  'on':
+  - district_name
+  reason: many_to_many
+  suggestion: do not join; filter with  IN (SELECT ... )  or reduce one side to one row per key first
+- tables:
+  - hcp_summary_with_territory_and_tm_info
+  - territory_alignment_hierarchy
+  'on':
+  - district_name
+  reason: many_to_many
+  suggestion: do not join; filter with  IN (SELECT ... )  or reduce one side to one row per key first
+- tables:
+  - hcp_summary_with_territory_and_tm_info
+  - rx_report_summary_geo
+  'on':
+  - territory_name
+  reason: many_to_many
+  suggestion: do not join; filter with  IN (SELECT ... )  or reduce one side to one row per key first
+- tables:
+  - hcp_summary_with_territory_and_tm_info
+  - rx_report_summary_geo
+  'on':
+  - district_name
+  reason: many_to_many
+  suggestion: do not join; filter with  IN (SELECT ... )  or reduce one side to one row per key first
+- tables:
+  - hcp_summary_with_territory_and_tm_info
+  - rx_report_summary_geo
+  'on':
+  - product_name
+  reason: many_to_many
+  suggestion: do not join; filter with  IN (SELECT ... )  or reduce one side to one row per key first
+- tables:
+  - hcp_rx_summary_report
+  - hcp_activity_calls_vae_suggestions
+  'on':
+  - territory_name
+  reason: many_to_many
+  suggestion: do not join; filter with  IN (SELECT ... )  or reduce one side to one row per key first
+- tables:
+  - hcp_rx_summary_report
+  - hcp_activity_calls_vae_suggestions
+  'on':
+  - district_name
+  reason: many_to_many
+  suggestion: do not join; filter with  IN (SELECT ... )  or reduce one side to one row per key first
+- tables:
+  - hcp_rx_summary_report
+  - territory_alignment_hierarchy
+  'on':
+  - district_name
+  reason: many_to_many
+  suggestion: do not join; filter with  IN (SELECT ... )  or reduce one side to one row per key first
+- tables:
+  - hcp_rx_summary_report
+  - rx_report_summary_geo
+  'on':
+  - territory_name
+  reason: many_to_many
+  suggestion: do not join; filter with  IN (SELECT ... )  or reduce one side to one row per key first
+- tables:
+  - hcp_rx_summary_report
+  - rx_report_summary_geo
+  'on':
+  - district_name
+  reason: many_to_many
+  suggestion: do not join; filter with  IN (SELECT ... )  or reduce one side to one row per key first
+- tables:
+  - hcp_rx_summary_report
+  - rx_report_summary_geo
+  'on':
+  - product_name
+  reason: many_to_many
+  suggestion: do not join; filter with  IN (SELECT ... )  or reduce one side to one row per key first
+- tables:
+  - hcp_activity_calls_vae_suggestions
+  - territory_alignment_hierarchy
+  'on':
+  - district_name
+  reason: many_to_many
+  suggestion: do not join; filter with  IN (SELECT ... )  or reduce one side to one row per key first
+- tables:
+  - hcp_activity_calls_vae_suggestions
+  - rx_report_summary_geo
+  'on':
+  - territory_name
+  reason: many_to_many
+  suggestion: do not join; filter with  IN (SELECT ... )  or reduce one side to one row per key first
+- tables:
+  - hcp_activity_calls_vae_suggestions
+  - rx_report_summary_geo
+  'on':
+  - district_name
+  reason: many_to_many
+  suggestion: do not join; filter with  IN (SELECT ... )  or reduce one side to one row per key first
+- tables:
+  - territory_alignment_hierarchy
+  - rx_report_summary_geo
+  'on':
+  - district_name
+  reason: many_to_many
+  suggestion: do not join; filter with  IN (SELECT ... )  or reduce one side to one row per key first

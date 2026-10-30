@@ -1,0 +1,68 @@
+- question: Which district has the most NBRx for jalric?
+  route: sales
+  agent: sales_geo
+- question: Which area has the highest TRx for the OBU division this week?
+  route: sales
+  agent: sales_geo
+- question: TRx for Ny1 district in the latest month
+  route: sales
+  agent: sales_geo
+- question: Which territories in New York Area have the lowest NTS?
+  route: sales
+  agent: sales_geo
+- question: Compare Neuro TRx across areas
+  route: sales
+  agent: sales_geo
+- question: Which division wrote the least TRx last week?
+  route: sales
+  agent: sales_geo
+- question: Who writes the most NTS for enu?
+  route: sales
+  agent: sales_hcp
+- question: Which hcps are managed by tara.eriksen@firm.comp.com?
+  route: sales
+  agent: sales_hcp
+- question: Who are the top 10 prescribers in Mid Atlantic Area over the last 13 weeks?
+  route: sales
+  agent: sales_hcp
+- question: Which doctors are prescribing zent in cal_terr_9?
+  route: sales
+  agent: sales_hcp
+- question: Show the trending doctors in Ne1 district for flend
+  route: sales
+  agent: sales_hcp
+- question: Which hcps work at 1183 Riverside Road?
+  route: sales
+  agent: sales_hcp
+- question: What is my VAE reach this week in mid_terr_3?
+  route: sales
+  agent: sales_activity
+- question: How many calls remain to be made in Cal3 district this month?
+  route: sales
+  agent: sales_activity
+- question: What was the call reach last week for the Neuro division?
+  route: sales
+  agent: sales_activity
+- question: How many VAE should I still send in cal_terr_5?
+  route: sales
+  agent: sales_activity
+- question: Reach for doctors prescribing glisol in Cal2 district
+  route: sales
+  agent: sales_activity
+- question: Which of my hcps have not been called enough this week in cal_terr_2?
+  route: sales
+  agent: sales_activity
+- question: Pull the exclusion criteria from data/synthetic/protocol_001.txt
+  route: clinical
+- question: What dosing regimen is described in the protocol file data/synthetic/protocol_001.txt?
+  route: clinical
+- question: Can you read a trial protocol for me?
+  route: clinical
+- question: How many claims were rejected for jalric?
+  route: out_of_scope
+- question: Write me a poem about territories
+  route: out_of_scope
+- question: What's the price of menji?
+  route: out_of_scope
+- question: Show payer mix by territory
+  route: out_of_scope

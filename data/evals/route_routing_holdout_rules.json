@@ -1,0 +1,235 @@
+{
+ "mode": "rules",
+ "correct": 23,
+ "n": 25,
+ "methods": {
+  "rules": 44
+ },
+ "rows": [
+  {
+   "question": "Which district has the most NBRx for jalric?",
+   "expected": "sales_geo",
+   "supervisor": "sales",
+   "sales": "sales_geo",
+   "ok": true,
+   "clarify": false,
+   "seconds": 0.0
+  },
+  {
+   "question": "Which area has the highest TRx for the OBU division this week?",
+   "expected": "sales_geo",
+   "supervisor": "sales",
+   "sales": "sales_geo",
+   "ok": true,
+   "clarify": false,
+   "seconds": 0.0
+  },
+  {
+   "question": "TRx for Ny1 district in the latest month",
+   "expected": "sales_geo",
+   "supervisor": "sales",
+   "sales": "sales_geo",
+   "ok": true,
+   "clarify": false,
+   "seconds": 0.0
+  },
+  {
+   "question": "Which territories in New York Area have the lowest NTS?",
+   "expected": "sales_geo",
+   "supervisor": "sales",
+   "sales": "sales_geo",
+   "ok": true,
+   "clarify": false,
+   "seconds": 0.0
+  },
+  {
+   "question": "Compare Neuro TRx across areas",
+   "expected": "sales_geo",
+   "supervisor": "sales",
+   "sales": "sales_geo",
+   "ok": true,
+   "clarify": false,
+   "seconds": 0.0
+  },
+  {
+   "question": "Which division wrote the least TRx last week?",
+   "expected": "sales_geo",
+   "supervisor": "sales",
+   "sales": "sales_geo",
+   "ok": true,
+   "clarify": false,
+   "seconds": 0.0
+  },
+  {
+   "question": "Who writes the most NTS for enu?",
+   "expected": "sales_hcp",
+   "supervisor": "sales",
+   "sales": "sales_hcp",
+   "ok": true,
+   "clarify": false,
+   "seconds": 0.0
+  },
+  {
+   "question": "Which hcps are managed by tara.eriksen@firm.comp.com?",
+   "expected": "sales_hcp",
+   "supervisor": "sales",
+   "sales": "sales_hcp",
+   "ok": true,
+   "clarify": false,
+   "seconds": 0.0
+  },
+  {
+   "question": "Who are the top 10 prescribers in Mid Atlantic Area over the last 13 weeks?",
+   "expected": "sales_hcp",
+   "supervisor": "sales",
+   "sales": "sales_hcp",
+   "ok": true,
+   "clarify": false,
+   "seconds": 0.0
+  },
+  {
+   "question": "Which doctors are prescribing zent in cal_terr_9?",
+   "expected": "sales_hcp",
+   "supervisor": "sales",
+   "sales": "sales_hcp",
+   "ok": true,
+   "clarify": false,
+   "seconds": 0.0
+  },
+  {
+   "question": "Show the trending doctors in Ne1 district for flend",
+   "expected": "sales_hcp",
+   "supervisor": "sales",
+   "sales": "sales_hcp",
+   "ok": true,
+   "clarify": false,
+   "seconds": 0.0
+  },
+  {
+   "question": "Which hcps work at 1183 Riverside Road?",
+   "expected": "sales_hcp",
+   "supervisor": "sales",
+   "sales": "sales_hcp",
+   "ok": true,
+   "clarify": false,
+   "seconds": 0.0
+  },
+  {
+   "question": "What is my VAE reach this week in mid_terr_3?",
+   "expected": "sales_activity",
+   "supervisor": "sales",
+   "sales": "sales_activity",
+   "ok": true,
+   "clarify": false,
+   "seconds": 0.0
+  },
+  {
+   "question": "How many calls remain to be made in Cal3 district this month?",
+   "expected": "sales_activity",
+   "supervisor": "sales",
+   "sales": "sales_activity",
+   "ok": true,
+   "clarify": false,
+   "seconds": 0.0
+  },
+  {
+   "question": "What was the call reach last week for the Neuro division?",
+   "expected": "sales_activity",
+   "supervisor": "sales",
+   "sales": "sales_activity",
+   "ok": true,
+   "clarify": false,
+   "seconds": 0.0
+  },
+  {
+   "question": "How many VAE should I still send in cal_terr_5?",
+   "expected": "sales_activity",
+   "supervisor": "sales",
+   "sales": "sales_activity",
+   "ok": true,
+   "clarify": false,
+   "seconds": 0.0
+  },
+  {
+   "question": "Reach for doctors prescribing glisol in Cal2 district",
+   "expected": "sales_activity",
+   "supervisor": "sales",
+   "sales": "sales_activity",
+   "ok": true,
+   "clarify": false,
+   "seconds": 0.0
+  },
+  {
+   "question": "Which of my hcps have not been called enough this week in cal_terr_2?",
+   "expected": "sales_activity",
+   "supervisor": "sales",
+   "sales": "sales_hcp",
+   "ok": false,
+   "clarify": false,
+   "seconds": 0.0
+  },
+  {
+   "question": "Pull the exclusion criteria from data/synthetic/protocol_001.txt",
+   "expected": "clinical",
+   "supervisor": "clinical",
+   "sales": null,
+   "ok": true,
+   "clarify": false,
+   "seconds": 0.0
+  },
+  {
+   "question": "What dosing regimen is described in the protocol file data/synthetic/protocol_001.txt?",
+   "expected": "clinical",
+   "supervisor": "clinical",
+   "sales": null,
+   "ok": true,
+   "clarify": false,
+   "seconds": 0.0
+  },
+  {
+   "question": "Can you read a trial protocol for me?",
+   "expected": "clinical",
+   "supervisor": "clinical",
+   "sales": null,
+   "ok": true,
+   "clarify": false,
+   "seconds": 0.0
+  },
+  {
+   "question": "How many claims were rejected for jalric?",
+   "expected": "out_of_scope",
+   "supervisor": "out_of_scope",
+   "sales": null,
+   "ok": true,
+   "clarify": false,
+   "seconds": 0.0
+  },
+  {
+   "question": "Write me a poem about territories",
+   "expected": "out_of_scope",
+   "supervisor": "sales",
+   "sales": "sales_hcp",
+   "ok": false,
+   "clarify": false,
+   "seconds": 0.0
+  },
+  {
+   "question": "What's the price of menji?",
+   "expected": "out_of_scope",
+   "supervisor": "out_of_scope",
+   "sales": null,
+   "ok": true,
+   "clarify": false,
+   "seconds": 0.0
+  },
+  {
+   "question": "Show payer mix by territory",
+   "expected": "out_of_scope",
+   "supervisor": "out_of_scope",
+   "sales": null,
+   "ok": true,
+   "clarify": false,
+   "seconds": 0.0
+  }
+ ]
+}

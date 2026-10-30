@@ -1,5 +1,6 @@
-"""Sales agent steps. The database holds only masked values, so nothing here sees real names."""
+"""Sales agent steps (schema v2). The database holds only masked values and the question is masked before it gets here."""
 import json
+import os
 import re
 from decimal import Decimal
 from pathlib import Path
@@ -8,11 +9,11 @@ import duckdb
 
 from app.common.config import settings
 from app.common.llm import get_llm
-from app.sales.semantic.catalog import KEYWORDS, VIEWS, build_prompt
+from app.sales.semantic.catalog import make_plan, render_prompt
 from app.sales.sql_guard import guard
 
 DB = Path(settings.work_dir) / "pharma.duckdb"
-COUNT_COLS = re.compile(r"trx|nrx|nbrx|calls|vae|submitted|paid|rejected|abandoned|count", re.I)
+COUNT_COLS = re.compile(r"(trx|nbrx|nts|previous_\w+|remaining|suggested_engagements|activity_count|total\w*)")
 
 
 def connect():
@@ -28,6 +29,16 @@ def _json_default(o):
     return float(o) if isinstance(o, Decimal) else str(o)
 
 
+def load_known(con) -> dict:
+    q = lambda sql: [r[0] for r in con.execute(sql).fetchall()]
+    return {"territory_name": q("SELECT DISTINCT territory_name FROM territory_alignment_hierarchy"),
+            "district_name": q("SELECT DISTINCT district_name FROM territory_alignment_hierarchy"),
+            "area_name": q("SELECT DISTINCT area_name FROM territory_alignment_hierarchy"),
+            "division_name": q("SELECT DISTINCT division_name FROM territory_alignment_hierarchy"),
+            "product_name": q("SELECT DISTINCT product_name FROM hcp_summary_with_territory_and_tm_info"),
+            "address_line": q("SELECT DISTINCT address_line FROM hcp_summary_with_territory_and_tm_info")}
+
+
 def extract_sql(text: str) -> str:
     m = re.search(r"```(?:sql)?\s*(.*?)```", text, re.S | re.I)
     text = m.group(1) if m else text
@@ -36,27 +47,28 @@ def extract_sql(text: str) -> str:
 
 
 def select_views_node(state):
-    q = state["question"].lower()
-    chosen = [v for v, kws in KEYWORDS.items() if any(k in q for k in kws)]
-    if "v_hcp_rx" in chosen and "v_hcp_activity" in chosen:
-        chosen = ["v_hcp_monthly"]
     con = connect()
-    data_end = str(con.execute("SELECT MAX(week_start) FROM fact_rx").fetchone()[0])
+    known = load_known(con)
+    data_end = str(con.execute("SELECT MAX(grain_end_date) FROM hcp_rx_summary_report").fetchone()[0])
     con.close()
-    return {"views": chosen or list(VIEWS), "data_end": data_end, "attempts": 0, "error": ""}
+    plan = make_plan(state["question"], known, state.get("agent"))
+    return {"plan": plan, "views": plan["relations"], "data_end": data_end, "attempts": 0, "error": ""}
 
 
 def write_sql_node(state):
-    prompt = build_prompt(state["question"], state["views"], state["data_end"])
+    attempts = state.get("attempts", 0) + 1
+    if os.getenv("PROMPT_MODE", "full") == "template" and not state.get("error"):   # ablation: planner only, no LLM
+        return {"sql_raw": state["plan"]["template"], "attempts": attempts, "error": ""}
+    prompt = render_prompt(state["plan"], state["question"])
     if state.get("error"):
         prompt += f" {state.get('sql_raw', '')[:400]}\n(That attempt failed: {state['error']}. Write a corrected query.)\nSQL:"
     raw = get_llm("sql").invoke(prompt).content
-    return {"sql_raw": extract_sql(raw), "attempts": state.get("attempts", 0) + 1, "error": ""}
+    return {"sql_raw": extract_sql(raw), "attempts": attempts, "error": ""}
 
 
 def guard_node(state):
     try:
-        return {"sql": guard(state["sql_raw"]), "error": ""}
+        return {"sql": guard(state["sql_raw"], state.get("agent")), "error": ""}
     except Exception as e:
         return {"error": f"SQL rejected: {e}"}
 
@@ -75,10 +87,10 @@ def execute_node(state):
 
 def validate_node(state):
     rows, cols = state.get("rows", []), state.get("columns", [])
-    if not rows:
-        return {"error": "query returned no rows; check filters and date ranges"}
+    if not rows or all(v is None for r in rows for v in r):
+        return {"error": "query returned no rows or only NULL; check filters and the grain"}
     for j, c in enumerate(cols):
-        if COUNT_COLS.search(c) and any(isinstance(r[j], (int, float)) and r[j] < 0 for r in rows):
+        if COUNT_COLS.fullmatch(c.lower()) and any(isinstance(r[j], (int, float)) and r[j] < 0 for r in rows):
             return {"error": f"negative values in count column {c}"}
     return {"error": ""}
 
@@ -96,7 +108,7 @@ def render_table(cols, rows, n=20):
 
 def _nums(s):
     out = []
-    for x in re.findall(r"(?<![A-Za-z0-9])\d[\d,]*\.?\d*", s):
+    for x in re.findall(r"(?<![A-Za-z0-9_])\d[\d,]*\.?\d*", s):
         try:
             out.append(float(x.replace(",", "").rstrip(".")))
         except ValueError:
@@ -106,7 +118,7 @@ def _nums(s):
 
 def grounded(narration, table):
     allowed = _nums(table)
-    return all(any(abs(x - y) <= max(0.01 * abs(y), 0.006) for y in allowed) or x in (1, 2, 3) for x in _nums(narration))
+    return all(any(abs(x - y) <= max(0.01 * abs(y), 0.006) for y in allowed) or (x <= 10 and x == int(x)) for x in _nums(narration))
 
 
 def narrate_node(state):
@@ -115,6 +127,6 @@ def narrate_node(state):
         return {"table": table, "answer": ""}
     prompt = (f"Question: {state['question']}\nResults:\n{table}\n"
               "Answer in one or two short sentences using only numbers shown in the results. "
-              "Keep placeholders like <FULL_NAME_3> exactly as written.")
+              "Keep placeholders like <HCP_FULL_NAME_3> exactly as written.")
     text = get_llm("router").invoke(prompt).content.strip()
     return {"table": table, "answer": text if grounded(text, table) else "(summary skipped: numbers could not be verified; see table)"}

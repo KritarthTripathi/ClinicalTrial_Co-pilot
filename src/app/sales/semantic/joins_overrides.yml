@@ -1,0 +1,3 @@
+# Joins you removed on purpose. discover_joins.py drops them every time it runs.
+disabled:
+  - {one: territory_alignment_hierarchy, many: rx_report_summary_geo, columns: [territory_name], reason: "removed by owner; the geo agent uses the territory lookup subquery instead"}
